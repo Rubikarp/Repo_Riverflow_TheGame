@@ -1,4 +1,5 @@
 using UnityEngine;
+//using UnityEngine.AddressableAssets;
 
 public static class ProjectBootstrapper
 {
@@ -11,9 +12,9 @@ public static class ProjectBootstrapper
     // If using Addressable
     /*
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void Execute()
+    public static void ExecuteB()
     {
-        Object.DontDestroyOnLoad(Addressable.InstantiateAsync("#META#").WaitForCompletion());
+        Object.DontDestroyOnLoad(Addressables.InstantiateAsync("#META#").WaitForCompletion());
     }
     */
 }

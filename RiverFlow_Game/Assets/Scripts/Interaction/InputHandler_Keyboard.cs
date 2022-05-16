@@ -3,23 +3,19 @@ using UnityEngine;
 using UnityEngine.Events;
 using NaughtyAttributes;
 
-[Serializable] public class InputEvent : UnityEvent<InputMode> { }
 public enum InputMode
 {
-    nothing = 0,
-    diging = 1,
-    eraser = 2,
-    cloud = 3,
-    lake = 4,
-    source = 5,
+    None = 0,
+    Dig = 1,
+    Erase = 2,
+    Cloud = 3,
+    Lake = 4,
+    Source = 5,
 }
+[Serializable] public class InputEvent : UnityEvent<InputMode> { }
 
 public class InputHandler_Keyboard : Singleton<InputHandler_Keyboard>
 {
-    [Header("reférence")]
-    public Camera cam;
-    public Transform camTransf;
-
     [Header("Event")]
     public InputEvent onInputPress;
     public InputEvent onInputMaintain;
@@ -29,37 +25,56 @@ public class InputHandler_Keyboard : Singleton<InputHandler_Keyboard>
     Plane inputSurf = new Plane(Vector3.back, Vector3.zero);
     Rect viewport = new Rect(0, 0, 1, 1);
     Ray ray;
-    [Space(10)]
-    public float hitDist = 0f;
-    public Vector3 hitPoint = Vector3.zero;
+    //
+    private Camera camera
+    {
+        get
+        {
+            if (_camera is null) _camera = KarpHelper.Camera;
+            return _camera;
+        }
+    }
+    [SerializeField] Camera _camera;
+    //
+    [SerializeField, ReadOnly] float hitDist = 0f;
+    [SerializeField, ReadOnly] Vector3 hitPoint = Vector3.zero;
 
     [Header("Mode")]
-    public KeyCode digMode = KeyCode.Alpha1;
-    public KeyCode eraserMode = KeyCode.Alpha2;
-    public KeyCode cloudMode = KeyCode.Alpha3;
-    public KeyCode lakeMode = KeyCode.Alpha4;
-    public KeyCode sourceMode = KeyCode.Alpha5;
+    public ModeKeyMapping keyMode;
+
     [Space(10)]
-    public InputMode mode = InputMode.diging;
+    public InputMode mode = InputMode.Dig;
+    public InputMode Mode 
+    { 
+        get { return mode;}
+        set 
+        {
+            //Change ?
+            if (value == mode) return;
+            if (!isMaintaining) 
+            { 
+                mode = value; 
+            }
+            else
+            {
+                onInputRelease?.Invoke(mode);
+                mode = value;
+                onInputPress?.Invoke(mode);
+            }
+        }
+    }
     //public InputMode secondaryMode = InputMode.eraser;
 
-    public bool isMaintaining = false;
-    private InputMode lastMode = InputMode.diging;
-    public bool shortCutErasing = false;
+    [SerializeField, ReadOnly] bool isMaintaining = false;
+    [SerializeField, ReadOnly] bool shortCutErasing = false;
 
-    void Update()
-    {
-        CheckMode();
-        CheckInput();
-    }
-
-    //Méthodes
+    //Methods
     public Vector3 GetHitPos()
     {
         //Reset HitPoint
         hitPoint = Vector3.zero;
         //Get Ray
-        ray = cam.ScreenPointToRay(Input.mousePosition);
+        ray = camera.ScreenPointToRay(Input.mousePosition);
         //Raycast
         if (inputSurf.Raycast(ray, out hitDist))
         {
@@ -71,46 +86,26 @@ public class InputHandler_Keyboard : Singleton<InputHandler_Keyboard>
         }
         return hitPoint;
     }
-    
     public bool CursorInViewPort()
     {
-        Vector2 viewportPos = cam.ScreenToViewportPoint(Input.mousePosition);
+        Vector2 viewportPos = camera.ScreenToViewportPoint(Input.mousePosition);
         return viewport.Contains(viewportPos);
     }
-    //
-    private void CheckMode()
+    public void ChangeMode(InputMode newMode)
     {
-        lastMode = mode;
-        if (Input.GetKeyDown(digMode))
-        {
-            mode = InputMode.diging;
-        }
-        else 
-        if (Input.GetKeyDown(eraserMode))
-        {
-            mode = InputMode.eraser;
-        }
-        else
-        if (Input.GetKeyDown(cloudMode))
-        {
-            mode = InputMode.cloud;
-        }
-        else
-        if (Input.GetKeyDown(lakeMode))
-        {
-            mode = InputMode.lake;
-        }
-        else
-        if (Input.GetKeyDown(sourceMode))
-        {
-            mode = InputMode.source;
-        }
+        mode = newMode;
+    }
+    public void ChangeMode(int newMode)
+    {
+        newMode %= Enum.GetNames(typeof(InputMode)).Length;
+        mode = (InputMode)newMode;
+    }
 
-        if(isMaintaining && lastMode != mode )
-        {
-            onInputRelease?.Invoke(lastMode);
-            onInputPress?.Invoke(mode);
-        }
+    //
+    void Update()
+    {
+        CheckMode();
+        CheckInput();
     }
     private void CheckInput()
     {
@@ -154,7 +149,7 @@ public class InputHandler_Keyboard : Singleton<InputHandler_Keyboard>
             {
                 shortCutErasing = true;
                 isMaintaining = true;
-                onInputPress?.Invoke(InputMode.eraser);
+                onInputPress?.Invoke(InputMode.Erase);
             }
         }
         //OnDrag
@@ -163,13 +158,13 @@ public class InputHandler_Keyboard : Singleton<InputHandler_Keyboard>
             if (KarpHelper.IsOverUI())
             {
                 shortCutErasing = false;
-                onInputRelease?.Invoke(InputMode.eraser);
+                onInputRelease?.Invoke(InputMode.Erase);
             }
             else
             if (isMaintaining)
             {
                 shortCutErasing = true;
-                onInputMaintain?.Invoke(InputMode.eraser);
+                onInputMaintain?.Invoke(InputMode.Erase);
             }
         }
         //OnRelease
@@ -179,26 +174,45 @@ public class InputHandler_Keyboard : Singleton<InputHandler_Keyboard>
             {
                 shortCutErasing = false;
                 isMaintaining = false;
-                onInputRelease?.Invoke(InputMode.eraser);
+                onInputRelease?.Invoke(InputMode.Erase);
             }
         }
     }
-    //
-    public void ChangeMode(InputMode newMode)
+    private void CheckMode()
     {
-        lastMode = mode;
-        mode = newMode;
-        if (isMaintaining && lastMode != newMode)
+        if (Input.GetKeyDown(keyMode.dig))
         {
-            onInputRelease?.Invoke(lastMode);
-            onInputPress?.Invoke(mode);
+            mode = InputMode.Dig;
+        }
+        else 
+        if (Input.GetKeyDown(keyMode.eraser))
+        {
+            mode = InputMode.Erase;
+        }
+        else
+        if (Input.GetKeyDown(keyMode.cloud))
+        {
+            mode = InputMode.Cloud;
+        }
+        else
+        if (Input.GetKeyDown(keyMode.lake))
+        {
+            mode = InputMode.Lake;
+        }
+        else
+        if (Input.GetKeyDown(keyMode.source))
+        {
+            mode = InputMode.Source;
         }
     }
-    public void ChangeMode(int newMode)
-    {
-        newMode %= InputMode.GetNames(typeof(InputMode)).Length -1;
-        ChangeMode((InputMode)newMode);
-    }
+}
 
-
+[Serializable]
+public class ModeKeyMapping
+{
+    public KeyCode dig = KeyCode.Alpha1;
+    public KeyCode eraser = KeyCode.Alpha2;
+    public KeyCode cloud = KeyCode.Alpha3;
+    public KeyCode lake = KeyCode.Alpha4;
+    public KeyCode source = KeyCode.Alpha5;
 }
