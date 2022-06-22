@@ -1,25 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace RiverFlow.Core
 {
-    public class TileTopology : MonoBehaviour
+    [System.Serializable]
+    public class TileTopology
     {
-        [field: SerializeField] public Vector2Int GridPos { get; private set; }
-
         [Header("State")]
         public TileType type;
-        public FlowStrenght riverStrenght;
+        public FlowStrenght flow;
 
-        void Start()
-        {
-        
-        }
-
-        void Update()
-        {
-        
-        }
     }
 }

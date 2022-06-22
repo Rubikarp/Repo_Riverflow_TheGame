@@ -169,37 +169,24 @@ public struct Direction
         {
             case DirectionEnum.left:
                 return new Quaternion(0, 0, 1f, 0f).normalized;
-                break;
             case DirectionEnum.right:
                 return new Quaternion(0, 0, 0f, 1f).normalized;
-                break;
             case DirectionEnum.up:
                 return new Quaternion(0, 0, 0.7071068f, 0.7071068f).normalized;
-                break;
             case DirectionEnum.down:
                 return new Quaternion(0, 0, -0.7071068f, 0.7071068f).normalized;
-                break;
-
             case DirectionEnum.upLeft:
                 return new Quaternion(0, 0, 0.9238796f, 0.3826834f).normalized;
-                break;
             case DirectionEnum.upRight:
                 return new Quaternion(0, 0, 0.3826834f, 0.9238796f).normalized;
-                break;
             case DirectionEnum.downRight:
                 return new Quaternion(0, 0, -0.3826834f, 0.9238796f).normalized;
-                break;
             case DirectionEnum.downLeft:
                 return new Quaternion(0, 0, -0.9238796f, 0.3826834f).normalized;
-                break;
-
             case DirectionEnum.center:
                 return Quaternion.identity;
-                break;
-
             default:
                 return Quaternion.identity;
-                break;
         }
     }
 
