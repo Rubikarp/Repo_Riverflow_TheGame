@@ -4,14 +4,11 @@ using UnityEngine;
 
 namespace RiverFlow.Core
 {
-    public class MapHandler : MonoBehaviour
+    public class GameManager : Singleton<GameManager>
     {
-        public DataGrid<TileTopology> topology;
-
         void Start()
         {
-            //_ = flow.Tiles[0, 0].strenght;
-            //_ = flow.Size;
+        
         }
 
         void Update()

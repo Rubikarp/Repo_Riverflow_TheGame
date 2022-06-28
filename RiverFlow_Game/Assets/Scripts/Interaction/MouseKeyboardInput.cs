@@ -12,13 +12,19 @@ namespace RiverFlow.Core
         public InputBrutEvent onInputPress;
         public InputBrutEvent onInputMaintain;
         public InputBrutEvent onInputRelease;
+        public UnityEvent<float> onScrollChange;
+        public UnityEvent<Vector2> onMoveCam;
 
         [Header("Mode")]
         [SerializeField] ModeKeyMapping keyMode;
+        public float scrollSensitivity = 1f;
+        public float moveSensitivity = .1f;
 
         [Header("Internal Value")]
         [SerializeField] GamePlane worldLimit;
-        [SerializeField, ReadOnly] bool isMaintaining = false;
+        [SerializeField, ReadOnly] bool isMaintainingL = false;
+        [SerializeField, ReadOnly] bool isMaintainingR = false;
+        [SerializeField, ReadOnly] bool isMaintainingM = false;
         public Ray MouseRay { get => Utilities_UI.MouseScreenRay(); }
 
         void Update()
@@ -46,7 +52,7 @@ namespace RiverFlow.Core
                 if (Utilities_UI.IsOverUI()) return;
                 if (worldLimit.MouseInLimit())
                 {
-                    isMaintaining = true;
+                    isMaintainingL = true;
                     onInputPress?.Invoke(MouseRay, false);
                 }
             }
@@ -55,11 +61,11 @@ namespace RiverFlow.Core
             {
                 if (!worldLimit.MouseInLimit() || Utilities_UI.IsOverUI())
                 {
-                    isMaintaining = false;
+                    isMaintainingL = false;
                     onInputRelease?.Invoke(MouseRay, false);
                 }
                 else
-                if (isMaintaining)
+                if (isMaintainingL)
                 {
                     onInputMaintain?.Invoke(MouseRay, false);
                 }
@@ -67,9 +73,9 @@ namespace RiverFlow.Core
             //OnRelease
             if (Input.GetMouseButtonUp(0))
             {
-                if (isMaintaining)
+                if (isMaintainingL)
                 {
-                    isMaintaining = false;
+                    isMaintainingL = false;
                     onInputRelease?.Invoke(MouseRay, false);
                 }
             }
@@ -81,7 +87,7 @@ namespace RiverFlow.Core
                 if (Utilities_UI.IsOverUI()) return;
                 if (worldLimit.MouseInLimit())
                 {
-                    isMaintaining = true;
+                    isMaintainingR = true;
                     onInputPress?.Invoke(MouseRay, true);
                 }
             }
@@ -90,23 +96,51 @@ namespace RiverFlow.Core
             {
                 if (!worldLimit.MouseInLimit() || Utilities_UI.IsOverUI())
                 {
+                    isMaintainingR = false;
                     onInputRelease?.Invoke(MouseRay, true);
                 }
                 else
-                if (isMaintaining)
+                if (isMaintainingR)
                 {
-                    Debug.Log("keyboard maintain");
-
                     onInputMaintain?.Invoke(MouseRay, true);
                 }
             }
             //OnRelease
             if (Input.GetMouseButtonUp(1))
             {
-                if (isMaintaining)
+                if (isMaintainingR)
                 {
+                    isMaintainingR = false;
                     onInputRelease?.Invoke(MouseRay, true);
                 }
+            }
+
+
+            //OnPress
+            if (Input.GetMouseButtonDown(2))
+            {
+                    isMaintainingM = true;
+            }
+            //OnDrag
+            if (Input.GetMouseButton(2))
+            {
+                if (isMaintainingM)
+                {
+                    onMoveCam?.Invoke(Extension_Mouse.mouseDelta * moveSensitivity * Time.deltaTime);
+                }
+            }
+            //OnRelease
+            if (Input.GetMouseButtonUp(2))
+            {
+                if (isMaintainingM)
+                {
+                    isMaintainingM = false;
+                }
+            }
+
+            if (Input.mouseScrollDelta.y * scrollSensitivity != 0)
+            {
+                onScrollChange?.Invoke(Input.mouseScrollDelta.y * scrollSensitivity);
             }
         }
     }

@@ -41,6 +41,8 @@ namespace RiverFlow.Core
         public InputEvent onInputPress;
         public InputEvent onInputMaintain;
         public InputModeEvent onInputRelease;
+        public UnityEvent<float> onScrollChange;
+        public UnityEvent<Vector2> onMoveCam;
 
         public void ModeUpdate(InputMode newMode) => Mode = newMode;
 
@@ -85,6 +87,15 @@ namespace RiverFlow.Core
             }
             isMaintaining = false;
             onInputRelease?.Invoke(Mode);
+        }
+
+        public void Scroll(float delta )
+        {
+            onScrollChange?.Invoke(delta);
+        }
+        public void CamMove(Vector2 deltaMove)
+        {
+            onMoveCam?.Invoke(deltaMove);
         }
     }
 }
