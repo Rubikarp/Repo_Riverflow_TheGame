@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace RiverFlow.Core
 {
-    public class MapHandler : MonoBehaviour
+    public class MapHandler : Singleton<MapHandler>
     {
         [Header("Component")]
         public WorldGrid grid;
@@ -18,7 +18,21 @@ namespace RiverFlow.Core
         public MapData mapData;
 
         public bool showTopo;
+        private static DataGrid<TileTopology> InitTopo() => new DataGrid<TileTopology>(new Vector2Int(60, 32));
 
+        [Button] void LoadCurrentMap() => LoadMap(mapData);
+        public void LoadMap(MapData mapData)
+        {
+            this.mapData = mapData;
+            topology = new DataGrid<TileTopology>(new Vector2Int(60, 32));
+            for (int x = 0; x < topology.Size.x; x++)
+            {
+                for (int y = 0; y < topology.Size.y; y++)
+                {
+                    topology.Tiles[x, y].type = mapData.Topology[x, y];
+                }
+            }
+        }
         [Button] void LoadMap()
         {
             topology = new DataGrid<TileTopology>(new Vector2Int(60, 32));
@@ -30,11 +44,11 @@ namespace RiverFlow.Core
                 }
             }
         }
-        private static DataGrid<TileTopology> InitTopo() => new DataGrid<TileTopology>(new Vector2Int(60, 32));
 
         void Awake()
         {
-            LoadMap();
+            if (mapData is null) {/*R*/}
+            else LoadMap(mapData);
         }
 
         protected void OnDrawGizmos()

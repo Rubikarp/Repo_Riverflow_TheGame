@@ -71,10 +71,44 @@ namespace RiverFlow.LD
                     }
                 }
             }
-            //Save la modification
-            mapTexture.Apply();
+            mapTexture.filterMode = FilterMode.Point;
+            mapTexture.wrapMode = TextureWrapMode.Clamp;
 
             TextureGenerator.Create("newMapTexture", mapTexture, TextureType.PNG);
+        }
+        public Texture2D GetMapTexture()
+        {
+            Texture2D mapTexture = TextureGenerator.Generate(size, true);
+            for (int y = 0; y < size.y; y++)
+            {
+                for (int x = 0; x < size.x; x++)
+                {
+                    switch (Topology[x, y])
+                    {
+                        case TileType.Grass:
+                            mapTexture.SetPixel(x, y, new Color(0, 1, 0, 1));
+                            break;
+                        case TileType.Clay:
+                            mapTexture.SetPixel(x, y, new Color(0, 0, 1, 1));
+                            break;
+                        case TileType.Sand:
+                            mapTexture.SetPixel(x, y, new Color(1, 0, 0, 1));
+                            break;
+                        case TileType.Mountain:
+                            mapTexture.SetPixel(x, y, new Color(0, 0, 0, 0));
+                            break;
+                        default:
+                            mapTexture.SetPixel(x, y, new Color(0, 0, 0, 0));
+                            break;
+                    }
+                }
+            }
+            //Save la modification
+            mapTexture.Apply();
+            mapTexture.filterMode = FilterMode.Point;
+            mapTexture.wrapMode = TextureWrapMode.Clamp;
+
+            return mapTexture;
         }
     }
 }
