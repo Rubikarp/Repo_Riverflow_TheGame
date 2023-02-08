@@ -18,7 +18,7 @@ namespace RiverFlow.Core
     [Serializable] public class InputModeEvent : UnityEvent<InputMode> { }
     [Serializable] public class InputEvent : UnityEvent<InputMode, Vector3> { }
 
-    public class InputHandler : Singleton<InputHandler>
+    public class InputHandler : SingletonMonoBehaviour<InputHandler>
     {
         [Header("Internal Value")]
         [SerializeField, ReadOnly] InputMode modeBeforeErase = InputMode.None;

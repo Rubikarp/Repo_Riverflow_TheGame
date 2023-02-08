@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace RiverFlow.Core
 {
-    public class WorldGrid : Singleton<WorldGrid>
+    public class WorldGrid : SingletonMonoBehaviour<WorldGrid>
     {
         [Header("Parameter")]
         public float cellSize = 1;

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace RiverFlow.Core
 {
-    public class MapHandler : Singleton<MapHandler>
+    public class MapHandler : SingletonMonoBehaviour<MapHandler>
     {
         [Header("Component")]
         public WorldGrid grid;
