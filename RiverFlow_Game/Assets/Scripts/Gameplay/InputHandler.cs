@@ -14,37 +14,24 @@ namespace RiverFlow.Core
         Lake = 4,
         Source = 5,
     }
-    [Serializable] public class InputBrutEvent : UnityEvent<Ray, bool> { }
-    [Serializable] public class InputModeEvent : UnityEvent<InputMode> { }
-    [Serializable] public class InputEvent : UnityEvent<InputMode, Vector3> { }
 
     public class InputHandler : SingletonMonoBehaviour<InputHandler>
     {
-        [Header("Internal Value")]
-        [SerializeField, ReadOnly] InputMode modeBeforeErase = InputMode.None;
-        public InputMode mode = InputMode.Dig;
-        public InputMode Mode
-        {
-            get => mode;
-            set
-            {
-                if (isMaintaining) onInputRelease?.Invoke(Mode);
-                mode = value;
-            }
-        }
-        [Space(10)]
-        [SerializeField] GamePlane playableArea;
+        [SerializeField, ReadOnly] private bool isMaintaining = false;
+        [SerializeField, ReadOnly] private InputMode mode = InputMode.Dig;
+        [SerializeField, ReadOnly] private InputMode modeBeforeErase = InputMode.None;
 
-        [SerializeField, ReadOnly] bool isMaintaining = false;
+        public InputMode Mode { get => mode; }
 
+        [Header("Reference")]
+        [SerializeField] private GamePlane playableArea;
         [Header("Event")]
-        public InputEvent onInputPress;
-        public InputEvent onInputMaintain;
-        public InputModeEvent onInputRelease;
+        public UnityEvent<InputMode, Vector3> onInputPress;
+        public UnityEvent<InputMode, Vector3> onInputMaintain;
+        public UnityEvent<InputMode> onInputRelease;
+        public UnityEvent<InputMode> onModeChange;
         public UnityEvent<float> onScrollChange;
         public UnityEvent<Vector2> onMoveCam;
-
-        public void ModeUpdate(InputMode newMode) => Mode = newMode;
 
         public void Press(Ray ray, bool secondary)
         {
@@ -89,13 +76,15 @@ namespace RiverFlow.Core
             onInputRelease?.Invoke(Mode);
         }
 
-        public void Scroll(float delta )
+        public void ModeUpdate(InputMode newMode)
         {
-            onScrollChange?.Invoke(delta);
+            if (isMaintaining) onInputRelease?.Invoke(Mode);
+            if (newMode == mode) return;
+            mode = newMode;
+            onModeChange?.Invoke(mode);
         }
-        public void CamMove(Vector2 deltaMove)
-        {
-            onMoveCam?.Invoke(deltaMove);
-        }
+
+        public void Scroll(float delta) => onScrollChange?.Invoke(delta);
+        public void CamMove(Vector2 deltaMove) => onMoveCam?.Invoke(deltaMove);
     }
 }

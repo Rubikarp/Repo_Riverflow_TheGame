@@ -5,6 +5,9 @@ using NaughtyAttributes;
 
 namespace RiverFlow.Core
 {
+    [Serializable] public class InputBrutEvent : UnityEvent<Ray, bool> { }
+    [Serializable] public class InputModeEvent : UnityEvent<InputMode> { }
+
     public class MouseKeyboardInput : MonoBehaviour
     {
         [Header("Event")]
