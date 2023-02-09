@@ -19,6 +19,12 @@ namespace RiverFlow.Core
 
         public bool showTopo;
         private static DataGrid<TileTopology> InitTopo() => new DataGrid<TileTopology>(new Vector2Int(60, 32));
+        
+        private void Awake()
+        {
+            if (mapData is null) {/*R*/}
+            else LoadMap(mapData);
+        }
 
         [Button] void LoadCurrentMap() => LoadMap(mapData);
         public void LoadMap(MapData mapData)
@@ -33,24 +39,9 @@ namespace RiverFlow.Core
                 }
             }
         }
-        [Button] void LoadMap()
-        {
-            topology = new DataGrid<TileTopology>(new Vector2Int(60, 32));
-            for (int x = 0; x < topology.Size.x; x++)
-            {
-                for (int y = 0; y < topology.Size.y; y++)
-                {
-                    topology.Tiles[x, y].type = mapData.Topology[x, y];
-                }
-            }
-        }
 
-        void Awake()
-        {
-            if (mapData is null) {/*R*/}
-            else LoadMap(mapData);
-        }
 
+#if UNITY_EDITOR
         protected void OnDrawGizmos()
         {
             if (!showTopo) return;
@@ -66,7 +57,6 @@ namespace RiverFlow.Core
                     default: return Color.magenta;
                 }
             }
-#if UNITY_EDITOR
             Vector3 startPos = new Vector3(grid.OffSet.x, grid.OffSet.y, 0);
             startPos -= new Vector3(grid.Size.x, grid.Size.y, 0) * 0.5f * grid.cellSize;
 
@@ -83,8 +73,8 @@ namespace RiverFlow.Core
                     }
                 }
             }
-#endif
         }
+#endif
     }
 
 }

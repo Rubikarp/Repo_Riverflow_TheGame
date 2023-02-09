@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using NaughtyAttributes;
 
-namespace RiverFlow.Core
+namespace RiverFlow.Gameplay.Interaction
 {
     public enum InputMode
     {
@@ -18,24 +18,28 @@ namespace RiverFlow.Core
     public class InputHandler : SingletonMonoBehaviour<InputHandler>
     {
         [SerializeField, ReadOnly] private bool isMaintaining = false;
+        [SerializeField, ReadOnly] private Vector3 hitPoint;
         [SerializeField, ReadOnly] private InputMode mode = InputMode.Dig;
         [SerializeField, ReadOnly] private InputMode modeBeforeErase = InputMode.None;
 
         public InputMode Mode { get => mode; }
 
         [Header("Reference")]
-        [SerializeField] private GamePlane playableArea;
+        [SerializeField] public InteractionPlane playableArea;
+
         [Header("Event")]
-        public UnityEvent<InputMode, Vector3> onInputPress;
-        public UnityEvent<InputMode, Vector3> onInputMaintain;
-        public UnityEvent<InputMode> onInputRelease;
-        public UnityEvent<InputMode> onModeChange;
-        public UnityEvent<float> onScrollChange;
-        public UnityEvent<Vector2> onMoveCam;
+        [Foldout("Camera")] public UnityEvent<float> onScrollChange;
+        [Foldout("Camera")] public UnityEvent<Vector2> onMoveCam;
+        [Space(5)]
+        [Foldout("Switch")] public UnityEvent<InputMode> onModeChange;
+        [Space(5)]
+        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputPress;
+        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputMaintain;
+        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputRelease;
 
         public void Press(Ray ray, bool secondary)
         {
-            var hitPoint = playableArea.GetHitPos(ray);
+            hitPoint = playableArea.GetHitPos(ray);
             if (playableArea.InLimit(hitPoint))
             {
                 if (secondary)
@@ -49,7 +53,7 @@ namespace RiverFlow.Core
         }
         public void Maintaining(Ray ray, bool secondary)
         {
-            var hitPoint = playableArea.GetHitPos(ray);
+            hitPoint = playableArea.GetHitPos(ray);
             if (playableArea.InLimit(hitPoint) && isMaintaining)
             {
                 onInputMaintain?.Invoke(Mode, hitPoint);
@@ -62,23 +66,26 @@ namespace RiverFlow.Core
                     modeBeforeErase = InputMode.None;
                 }
                 isMaintaining = false;
-                onInputRelease?.Invoke(Mode);
+                onInputRelease?.Invoke(Mode, hitPoint);
             }
         }
         public void Release(Ray ray, bool secondary)
         {
-            if (secondary && modeBeforeErase != InputMode.None)
+            if (isMaintaining)
             {
-                mode = modeBeforeErase;
-                modeBeforeErase = InputMode.None;
+                if (secondary && modeBeforeErase != InputMode.None)
+                {
+                    mode = modeBeforeErase;
+                    modeBeforeErase = InputMode.None;
+                }
+                isMaintaining = false;
+                onInputRelease?.Invoke(Mode, hitPoint);
             }
-            isMaintaining = false;
-            onInputRelease?.Invoke(Mode);
         }
 
         public void ModeUpdate(InputMode newMode)
         {
-            if (isMaintaining) onInputRelease?.Invoke(Mode);
+            if (isMaintaining) onInputRelease?.Invoke(Mode,hitPoint);
             if (newMode == mode) return;
             mode = newMode;
             onModeChange?.Invoke(mode);

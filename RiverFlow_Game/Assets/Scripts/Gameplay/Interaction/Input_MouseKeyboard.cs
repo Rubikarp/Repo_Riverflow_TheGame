@@ -2,21 +2,23 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using NaughtyAttributes;
+using RiverFlow.Core;
 
-namespace RiverFlow.Core
+namespace RiverFlow.Gameplay.Interaction
 {
-    [Serializable] public class InputBrutEvent : UnityEvent<Ray, bool> { }
-    [Serializable] public class InputModeEvent : UnityEvent<InputMode> { }
-
-    public class MouseKeyboardInput : MonoBehaviour
+    public class Input_MouseKeyboard : MonoBehaviour
     {
+        [SerializeField, Required] private InputHandler input;
+
         [Header("Event")]
-        public InputModeEvent onModeChange;
-        public InputBrutEvent onInputPress;
-        public InputBrutEvent onInputMaintain;
-        public InputBrutEvent onInputRelease;
-        public UnityEvent<float> onScrollChange;
-        public UnityEvent<Vector2> onMoveCam;
+        [Foldout("Camera")] public UnityEvent<Vector2> onMoveCam;
+        [Foldout("Camera")] public UnityEvent<float> onScrollChange;
+        [Space(5)]
+        [Foldout("Switch")] public UnityEvent<InputMode> onModeChange;
+        [Space(5)]
+        [Foldout("Click")] public UnityEvent<Ray, bool> onInputPress;
+        [Foldout("Click")] public UnityEvent<Ray, bool> onInputMaintain;
+        [Foldout("Click")] public UnityEvent<Ray, bool> onInputRelease;
 
         [Header("Mode")]
         [SerializeField] ModeKeyMapping keyMode;
@@ -24,36 +26,25 @@ namespace RiverFlow.Core
         public float moveSensitivity = .1f;
 
         [Header("Internal Value")]
-        [SerializeField] GamePlane worldLimit;
         [SerializeField, ReadOnly] bool isMaintainingL = false;
         [SerializeField, ReadOnly] bool isMaintainingR = false;
         [SerializeField, ReadOnly] bool isMaintainingM = false;
+        [SerializeField] private InteractionPlane Limit => input.playableArea;
         public Ray MouseRay { get => Utilities_UI.MouseScreenRay(); }
 
-        void Update()
+        private void Update()
         {
             CheckMode();
             CheckInput();
         }
-        private void CheckMode()
-        {
-            if (Input.GetKeyDown(keyMode.dig)) onModeChange?.Invoke(InputMode.Dig);
-            else 
-            if (Input.GetKeyDown(keyMode.eraser)) onModeChange?.Invoke(InputMode.Erase);
-            else 
-            if (Input.GetKeyDown(keyMode.cloud)) onModeChange?.Invoke(InputMode.Cloud);
-            else 
-            if (Input.GetKeyDown(keyMode.lake)) onModeChange?.Invoke(InputMode.Lake);
-            else 
-            if (Input.GetKeyDown(keyMode.source)) onModeChange?.Invoke(InputMode.Source);
-        }
+
         private void CheckInput()
         {
             //OnPress
             if (Input.GetMouseButtonDown(0))
             {
                 if (Utilities_UI.IsOverUI()) return;
-                if (worldLimit.MouseInLimit())
+                if (Limit.MouseInLimit())
                 {
                     isMaintainingL = true;
                     onInputPress?.Invoke(MouseRay, false);
@@ -62,7 +53,7 @@ namespace RiverFlow.Core
             //OnDrag
             if (Input.GetMouseButton(0))
             {
-                if (!worldLimit.MouseInLimit() || Utilities_UI.IsOverUI())
+                if (!Limit.MouseInLimit() || Utilities_UI.IsOverUI())
                 {
                     isMaintainingL = false;
                     onInputRelease?.Invoke(MouseRay, false);
@@ -88,7 +79,7 @@ namespace RiverFlow.Core
             if (Input.GetMouseButtonDown(1))
             {
                 if (Utilities_UI.IsOverUI()) return;
-                if (worldLimit.MouseInLimit())
+                if (Limit.MouseInLimit())
                 {
                     isMaintainingR = true;
                     onInputPress?.Invoke(MouseRay, true);
@@ -97,7 +88,7 @@ namespace RiverFlow.Core
             //OnDrag
             if (Input.GetMouseButton(1))
             {
-                if (!worldLimit.MouseInLimit() || Utilities_UI.IsOverUI())
+                if (!Limit.MouseInLimit() || Utilities_UI.IsOverUI())
                 {
                     isMaintainingR = false;
                     onInputRelease?.Invoke(MouseRay, true);
@@ -145,6 +136,18 @@ namespace RiverFlow.Core
             {
                 onScrollChange?.Invoke(Input.mouseScrollDelta.y * scrollSensitivity);
             }
+        }
+        private void CheckMode()
+        {
+            if (Input.GetKeyDown(keyMode.dig)) onModeChange?.Invoke(InputMode.Dig);
+            else 
+            if (Input.GetKeyDown(keyMode.eraser)) onModeChange?.Invoke(InputMode.Erase);
+            else 
+            if (Input.GetKeyDown(keyMode.cloud)) onModeChange?.Invoke(InputMode.Cloud);
+            else 
+            if (Input.GetKeyDown(keyMode.lake)) onModeChange?.Invoke(InputMode.Lake);
+            else 
+            if (Input.GetKeyDown(keyMode.source)) onModeChange?.Invoke(InputMode.Source);
         }
     }
 

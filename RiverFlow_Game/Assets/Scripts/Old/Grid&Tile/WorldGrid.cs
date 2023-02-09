@@ -1,5 +1,6 @@
 using UnityEngine;
 using NaughtyAttributes;
+using RiverFlow.Gameplay.Interaction;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -16,7 +17,7 @@ namespace RiverFlow.Core
         public Vector2Int Size { get => size; }
         public Vector2 OffSet { get => offSet; }
 
-        [SerializeField] GamePlane interactPlane;
+        [SerializeField] InteractionPlane interactPlane;
 
         public void SetLimit(Vector2Int size, Vector2 offSet = new Vector2())
         {

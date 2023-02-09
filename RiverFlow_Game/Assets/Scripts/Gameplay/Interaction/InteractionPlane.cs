@@ -5,35 +5,27 @@ using NaughtyAttributes;
 using UnityEditor;
 #endif
 
-namespace RiverFlow.Core
+namespace RiverFlow.Gameplay.Interaction
 {
-    public class GamePlane : MonoBehaviour
+    public class InteractionPlane : MonoBehaviour
     {
-        [Header("Parameter")]
-        [SerializeField, OnValueChanged("InitPlayableArea")] Vector2 offSet = Vector2.zero;
-        [SerializeField, OnValueChanged("InitPlayableArea")] Vector2 size = Vector2.one * 2;
-        public void SetLimit(Vector2 size, Vector2 offSet = new Vector2())
-        {
-            this.size = size;
-            this.offSet = offSet;
-            InitPlayableArea();
-        }
-
-        [Header("Boundary")]
-        [SerializeField, ReadOnly] Bounds area = new Bounds(Vector2.zero, Vector2.one);
-        public Bounds Area { get => area; }
-
-        [Header("Surface")]
-        [SerializeField, ReadOnly] Plane plane = new Plane(Vector3.back, Vector3.zero);
-        public Plane Plane { get => plane; }
-
+        #region Debug
         [SerializeField, Foldout("Debug")] Color debugColor = Color.green;
         [SerializeField, Foldout("Debug"), ReadOnly] Vector3 hitPoint = Vector3.zero;
         [SerializeField, Foldout("Debug"), ReadOnly] float hitDist = 0f;
         [SerializeField, Foldout("Debug"), ReadOnly] Ray ray;
+        #endregion
+
+        [Header("Parameter")]
+        [SerializeField, OnValueChanged("InitArea")] Vector2 offSet = Vector2.zero;
+        [SerializeField, OnValueChanged("InitArea")] Vector2 size = Vector2.one * 2;
+        [SerializeField, ReadOnly] Bounds area = new Bounds(Vector2.zero, Vector2.one);
+        [SerializeField, ReadOnly] Plane plane = new Plane(Vector3.back, Vector3.zero);
+        public Bounds Area => area;
+        public Plane Plane => plane;
 
         [Button]
-        private void InitPlayableArea()
+        private void InitArea()
         {
             area.center = transform.position + (Vector3)offSet;
             area.size = new Vector3(size.x, size.y, 0f);
@@ -41,21 +33,17 @@ namespace RiverFlow.Core
             plane = new Plane(Vector3.back, area.center);
         }
 
-        public bool MouseInLimit()
+        public void SetLimit(Vector2 size) => SetLimit(size, Vector2.zero);
+        public void SetLimit(Vector2 size, Vector2 offSet)
         {
-            return area.Contains(GetMouseHitPos());
+            this.size = size;
+            this.offSet = offSet;
+            InitArea();
         }
 
-        public bool InLimit(Vector3 hitPos)
-        {
-            return area.Contains(hitPos);
-        }
+        public bool InLimit(Vector3 hitPos) => area.Contains(hitPos);
+        public bool MouseInLimit() => area.Contains(GetMouseHitPos());
 
-        public Vector3 GetMouseHitPos()
-        {
-            ray = Utilities_UI.MouseScreenRay();
-            return GetHitPos(ray);
-        }
         public Vector3 GetHitPos(Ray ray)
         {
             //Reset HitPoint
@@ -79,15 +67,17 @@ namespace RiverFlow.Core
 
             return hitPoint;
         }
+        public Vector3 GetMouseHitPos() => GetHitPos(Utilities_UI.MouseScreenRay());
 
+
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-#if UNITY_EDITOR
             using (new Handles.DrawingScope(debugColor))
             {
                 Extension_Handles.DrawWireSquare(area.center, area.size);
             }
-#endif
         }
+#endif
     }
 }
