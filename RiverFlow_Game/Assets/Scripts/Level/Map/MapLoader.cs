@@ -11,8 +11,8 @@ namespace RiverFlow.Core
         public SpriteRenderer background;
         void Awake()
         {
-            MapHandler.Instance.LoadMap(mapToLoad);
-            background.sprite = Sprite.Create(mapToLoad.GetMapTexture(), new Rect(Vector2.zero, mapToLoad.size), Vector2.one * .5f, 1f);
+            LevelHandler.Instance.LoadMap(mapToLoad);
+            background.sprite = Sprite.Create(mapToLoad.GenerateMapTexture(), new Rect(Vector2.zero, mapToLoad.size), Vector2.one * .5f, 1f);
         }
     }
 }

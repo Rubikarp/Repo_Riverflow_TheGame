@@ -1,11 +1,11 @@
 using UnityEngine;
-using RiverFlow.Gameplay.Interaction;
+using RiverFlow.Core;
 
-namespace RiverFlow.Core
+namespace RiverFlow.Gameplay.Interaction
 {
-    public class InputCheck : MonoBehaviour
+    public class Input_Debug : MonoBehaviour
     {
-        public MapHandler map;
+        public LevelHandler map;
         public void onPress(InputMode mode, Vector3 pos)
         {
         }
@@ -15,16 +15,16 @@ namespace RiverFlow.Core
             switch (mode)
             {
                 case InputMode.Dig:
-                    map.topology.Tiles[tile.x, tile.y].type = TileType.Clay;
+                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Clay;
                     break;
                 case InputMode.Erase:
-                    map.topology.Tiles[tile.x, tile.y].type = TileType.Sand;
+                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Sand;
                     break;
                 case InputMode.Cloud | InputMode.Lake | InputMode.Source:
-                    map.topology.Tiles[tile.x, tile.y].type = TileType.Mountain;
+                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Mountain;
                     break;
                 default:
-                    map.topology.Tiles[tile.x, tile.y].type = TileType.Grass;
+                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Grass;
                     break;
             }
         }

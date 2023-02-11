@@ -149,12 +149,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 153147741}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b450d86582d81204ea440460c1043262, type: 3}
+  m_Script: {fileID: 11500000, guid: 7598748d319661247ace7c098897e7e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 1347921097}
   mapData: {fileID: 11400000, guid: b69d4acee493d24418af134703e9b667, type: 2}
-  showTopo: 0
+  showTopo: 1
 --- !u!4 &153147743
 Transform:
   m_ObjectHideFlags: 0
@@ -479,7 +479,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51ea4993d8d12f94bb00de4b7997262d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugColor: {r: 1, g: 1, b: 0, a: 1}
+  debugColor: {r: 0.69803923, g: 0.20784314, b: 0.69803923, a: 1}
   hitPoint: {x: 0, y: 0, z: 0}
   hitDist: 0
   offSet: {x: 0, y: 0}
@@ -645,7 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51ea4993d8d12f94bb00de4b7997262d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugColor: {r: 0, g: 1, b: 0, a: 1}
+  debugColor: {r: 0.20784314, g: 0.20784314, b: 0.69803923, a: 1}
   hitPoint: {x: 0, y: 0, z: 0}
   hitDist: 0
   offSet: {x: 0, y: 0}
