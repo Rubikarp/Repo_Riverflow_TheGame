@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4018a44346df0384fbceb9979bc402ec, type: 3}
-  m_Name: TileTypePalette
+  m_Name: TileTopologyPalette
   m_EditorClassIdentifier: 
   holedGround: {r: 0.5764706, g: 0.5137255, b: 0.3921569, a: 1}
   grass: {r: 0.6156863, g: 0.83921576, b: 0.5647059, a: 1}

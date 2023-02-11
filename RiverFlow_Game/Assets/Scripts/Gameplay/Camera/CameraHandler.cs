@@ -21,9 +21,13 @@ namespace RiverFlow.Core
         public void Zoom(float delta) => ZoomSize = Mathf.Clamp(ZoomSize - delta, ZoomLvlMin, ZoomLvlMax);
         public void Move(Vector2 deltaMove)
         {
-            //playbleArea.InLimit(transform.position + (Vector3)deltaMove);
-            Debug.Log(deltaMove);
-            transform.position -= (Vector3)deltaMove;
+            cam.transform.position -= (Vector3)deltaMove;
+
+            if (!playbleArea.Area.Contains(cam.transform.position))
+            {
+                cam.transform.position = playbleArea.Area.ClosestPoint(cam.transform.position);
+                cam.transform.position += Vector3.back * 10;
+            }
         } 
     }
 }

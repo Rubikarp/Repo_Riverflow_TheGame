@@ -15,12 +15,12 @@ namespace RiverFlow.LD
     public class MapData : ScriptableObject
     {
         public Vector2Int size = new Vector2Int(8, 8);
-        public TileType[] topology = new TileType[8 * 8];
-        public TileType[,] Topology
+        public TileTopology[] topology = new TileTopology[8 * 8];
+        public TileTopology[,] Topology
         {
             get
             {
-                TileType[,] result = new TileType[size.x, size.y];
+                TileTopology[,] result = new TileTopology[size.x, size.y];
                 for (int x = 0; x < size.x; x++)
                 {
                     for (int y = 0; y < size.y; y++)
@@ -33,82 +33,47 @@ namespace RiverFlow.LD
         }
 
         //Accesseurs
-        public Vector2Int Size
-        {
-            get => size;
-        }
+        public Vector2Int Size => size;
 
-#if UNITY_EDITOR
-        public TileType selectedType;
-        public Color[] typePalette = new Color[5 /*System.Enum.GetValues(typeof(TileType)).Length*/]
-        {Color.magenta, Color.green, Color.red, Color.yellow, Color.grey };
-#endif
         [Button]
-        public void MapToTextureChannel()
+        public void MapToTextureChannel() => TextureGenerator.Create("newMapTexture", GenerateMapTexture(), TextureType.PNG);
+
+        public Texture2D GenerateMapTexture()
         {
             Texture2D mapTexture = TextureGenerator.Generate(size, true);
             for (int y = 0; y < size.y; y++)
-            {
                 for (int x = 0; x < size.x; x++)
-                {
                     switch (Topology[x, y])
                     {
-                        case TileType.Grass:
-                            mapTexture.SetPixel(x, y, new Color(0, 1, 0, 1));
+                        case TileTopology.Grass:
+                            mapTexture.SetPixel(x, y, Color.green);
                             break;
-                        case TileType.Clay:
-                            mapTexture.SetPixel(x, y, new Color(0, 0, 1, 1));
+                        case TileTopology.Clay:
+                            mapTexture.SetPixel(x, y, Color.blue);
                             break;
-                        case TileType.Sand:
-                            mapTexture.SetPixel(x, y, new Color(1, 0, 0, 1));
+                        case TileTopology.Sand:
+                            mapTexture.SetPixel(x, y, Color.red);
                             break;
-                        case TileType.Mountain:
-                            mapTexture.SetPixel(x, y, new Color(0, 0, 0, 0));
+                        case TileTopology.Mountain:
+                            mapTexture.SetPixel(x, y, Color.clear);
                             break;
                         default:
-                            mapTexture.SetPixel(x, y, new Color(0, 0, 0, 0));
+                            mapTexture.SetPixel(x, y, Color.clear);
                             break;
                     }
-                }
-            }
+
             mapTexture.filterMode = FilterMode.Point;
             mapTexture.wrapMode = TextureWrapMode.Clamp;
-
-            TextureGenerator.Create("newMapTexture", mapTexture, TextureType.PNG);
-        }
-        public Texture2D GetMapTexture()
-        {
-            Texture2D mapTexture = TextureGenerator.Generate(size, true);
-            for (int y = 0; y < size.y; y++)
-            {
-                for (int x = 0; x < size.x; x++)
-                {
-                    switch (Topology[x, y])
-                    {
-                        case TileType.Grass:
-                            mapTexture.SetPixel(x, y, new Color(0, 1, 0, 1));
-                            break;
-                        case TileType.Clay:
-                            mapTexture.SetPixel(x, y, new Color(0, 0, 1, 1));
-                            break;
-                        case TileType.Sand:
-                            mapTexture.SetPixel(x, y, new Color(1, 0, 0, 1));
-                            break;
-                        case TileType.Mountain:
-                            mapTexture.SetPixel(x, y, new Color(0, 0, 0, 0));
-                            break;
-                        default:
-                            mapTexture.SetPixel(x, y, new Color(0, 0, 0, 0));
-                            break;
-                    }
-                }
-            }
             //Save la modification
             mapTexture.Apply();
-            mapTexture.filterMode = FilterMode.Point;
-            mapTexture.wrapMode = TextureWrapMode.Clamp;
 
             return mapTexture;
         }
+
+#if UNITY_EDITOR
+        public TileTopology selectedType;
+        public Color[] typePalette = new Color[5 /*System.Enum.GetValues(typeof(TileType)).Length*/]
+        {Color.magenta, Color.green, Color.red, Color.yellow, Color.grey };
+#endif
     }
 }
