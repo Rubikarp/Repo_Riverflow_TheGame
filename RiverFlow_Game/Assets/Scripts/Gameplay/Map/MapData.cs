@@ -1,9 +1,9 @@
+using Karprod;
 using UnityEngine;
-using NaughtyAttributes;
 using RiverFlow.Core;
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
-using Karprod;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,26 +14,13 @@ namespace RiverFlow.LD
     [CreateAssetMenu(fileName = "NewMap", menuName = "LevelDesign/NewMap")]
     public class MapData : ScriptableObject
     {
+        public Vector2Int Size { get => size; set => size = value; }
         public Vector2Int size = new Vector2Int(8, 8);
+
+        public TileTopology GetTopology(int x, int y) => topology[x + (size.y - 1 - y) * size.x];
         public TileTopology[] topology = new TileTopology[8 * 8];
-        public TileTopology[,] Topology
-        {
-            get
-            {
-                TileTopology[,] result = new TileTopology[size.x, size.y];
-                for (int x = 0; x < size.x; x++)
-                {
-                    for (int y = 0; y < size.y; y++)
-                    {
-                        result[x, y] = topology[x + ((size.y - y - 1) * size.x)];
-                    }
-                }
-                return result;
-            }
-        }
 
         //Accesseurs
-        public Vector2Int Size => size;
 
         [Button]
         public void MapToTextureChannel() => TextureGenerator.Create("newMapTexture", GenerateMapTexture(), TextureType.PNG);
@@ -43,7 +30,7 @@ namespace RiverFlow.LD
             Texture2D mapTexture = TextureGenerator.Generate(size, true);
             for (int y = 0; y < size.y; y++)
                 for (int x = 0; x < size.x; x++)
-                    switch (Topology[x, y])
+                    switch (GetTopology(x, y))
                     {
                         case TileTopology.Grass:
                             mapTexture.SetPixel(x, y, Color.green);

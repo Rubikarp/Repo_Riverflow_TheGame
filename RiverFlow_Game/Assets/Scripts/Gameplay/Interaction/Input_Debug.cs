@@ -15,16 +15,16 @@ namespace RiverFlow.Gameplay.Interaction
             switch (mode)
             {
                 case InputMode.Dig:
-                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Clay;
+                    map.tileGrid.GetTile(tile).topology = TileTopology.Clay;
                     break;
                 case InputMode.Erase:
-                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Sand;
+                    map.tileGrid.GetTile(tile).topology = TileTopology.Sand;
                     break;
                 case InputMode.Cloud | InputMode.Lake | InputMode.Source:
-                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Mountain;
+                    map.tileGrid.GetTile(tile).topology = TileTopology.Mountain;
                     break;
                 default:
-                    map.topology.Tiles[tile.x, tile.y].topology = TileTopology.Grass;
+                    map.tileGrid.GetTile(tile).topology = TileTopology.Grass;
                     break;
             }
         }

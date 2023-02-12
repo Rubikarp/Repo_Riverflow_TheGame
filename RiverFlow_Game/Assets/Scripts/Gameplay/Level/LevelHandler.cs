@@ -1,46 +1,36 @@
-using UnityEditor;
-using UnityEngine.Events;
 using System.Linq;
+using UnityEngine;
 using RiverFlow.LD;
 using NaughtyAttributes;
+using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
+
 #if UNITY_EDITOR
-using UnityEngine;
+using UnityEditor;
 #endif
 
 namespace RiverFlow.Core
 {
     public class LevelHandler : SingletonMonoBehaviour<LevelHandler>
     {
+        public bool showTopo;
+
         [Header("Component")]
         public WorldGrid grid;
-        public DataGrid<TileData> topology = InitTopo();
-        public MapData mapData;
+        [HideInInspector] public TileGrid tileGrid = new TileGrid(new Vector2Int(60, 32));
 
-        public bool showTopo;
-        private static DataGrid<TileData> InitTopo() => new DataGrid<TileData>(new Vector2Int(60, 32));
-        public UnityEvent onLoadEnd;
-        
-        private void Awake()
-        {
-            if (mapData is null) {/*R*/}
-            else LoadMap(mapData);
-        }
 
-        [Button] void LoadCurrentMap() => LoadMap(mapData);
         public void LoadMap(MapData mapData)
         {
-            this.mapData = mapData;
-            topology = new DataGrid<TileData>(new Vector2Int(60, 32));
-            for (int x = 0; x < topology.Size.x; x++)
+            tileGrid = new TileGrid(mapData.Size);
+            for (int x = 0; x < tileGrid.Size.x; x++)
             {
-                for (int y = 0; y < topology.Size.y; y++)
+                for (int y = 0; y < tileGrid.Size.y; y++)
                 {
-                    topology.Tiles[x, y].topology = mapData.Topology[x, y];
+                    tileGrid.GetTile(x, y).topology = mapData.GetTopology(x, y);
                 }
             }
-            onLoadEnd?.Invoke();
         }
 
 
@@ -67,11 +57,11 @@ namespace RiverFlow.Core
 
             using (new Handles.DrawingScope())
             {
-                for (int x = 0; x < topology.Size.x; x++)
+                for (int x = 0; x < tileGrid.Size.x; x++)
                 {
-                    for (int y = 0; y < topology.Size.y; y++)
+                    for (int y = 0; y < tileGrid.Size.y; y++)
                     {
-                        Handles.color = FromTopo(topology.Tiles[x, y].topology);
+                        Handles.color = FromTopo(tileGrid.GetTile(x, y).topology);
                         Extension_Handles.DrawWireSquare(startPos + new Vector3(x * grid.cellSize, y * grid.cellSize, 0) + new Vector3(halfCell, halfCell, 0), (Vector3)Vector2.one * grid.cellSize * 0.75f);
                     }
                 }

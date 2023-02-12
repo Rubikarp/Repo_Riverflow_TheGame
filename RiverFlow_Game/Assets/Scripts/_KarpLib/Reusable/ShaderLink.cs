@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using NaughtyAttributes;
 
 namespace RiverFlow.Core
 {
@@ -10,7 +11,7 @@ namespace RiverFlow.Core
         private void GetData(Renderer render, ref MaterialPropertyBlock propBlock)
         {
             //permet d'overide les param sans modif le mat ou créer d'instance
-            if(propBlock is null)propBlock = new MaterialPropertyBlock();
+            propBlock = new MaterialPropertyBlock();
             //Recup Data
             render.GetPropertyBlock(propBlock, 0);
         }
@@ -27,8 +28,7 @@ namespace RiverFlow.Core
         }
         public void UpdateProperty((string key, Texture2D value)[] shadersData)
         {
-            GetData(render, ref propBlock);
-            foreach (var shaderData in shadersData)
+            GetData(render, ref propBlock); foreach (var shaderData in shadersData)
             {
                 propBlock.SetTexture(shaderData.key, shaderData.value);
             }
@@ -36,8 +36,7 @@ namespace RiverFlow.Core
         }
         public void UpdateProperty((string key, Vector4 value)[] shadersData)
         {
-            GetData(render, ref propBlock);
-            foreach (var shaderData in shadersData)
+            GetData(render, ref propBlock); foreach (var shaderData in shadersData)
             {
                 propBlock.SetVector(shaderData.key, shaderData.value);
             }

@@ -17,14 +17,12 @@ namespace RiverFlow.LD
         //
         SerializedProperty tileColorProp;
         SerializedProperty selectedTileType;
-
-        float marginRatio;
-        bool isClicking;
-        Vector2 mousePos;
+        //
         Rect rectIn;
-        Vector2 scrollPos;
-        //TODO
+        bool isClicking;
         int brushSize = 3;
+        float marginRatio;
+        Vector2 mousePos, scrollPos;
 
         public void InitWindow(MapData _currentLD)
         {
@@ -84,11 +82,11 @@ namespace RiverFlow.LD
             //Fill Option
             if (GUILayout.Button("Fill grid by selected Brush", EditorStyles.miniButton))
             {
-                for (int y = 0; y < currentLD.size.y; y++)
+                for (int y = 0; y < currentLD.Size.y; y++)
                 {
-                    for (int x = 0; x < currentLD.size.x; x++)
+                    for (int x = 0; x < currentLD.Size.x; x++)
                     {
-                        topoTypeProp.GetArrayElementAtIndex(y * currentLD.size.x + x).enumValueIndex = selectedTileType.enumValueIndex;
+                        topoTypeProp.GetArrayElementAtIndex(y * currentLD.Size.x + x).enumValueIndex = selectedTileType.enumValueIndex;
                     }
                 }
             }
@@ -118,8 +116,8 @@ namespace RiverFlow.LD
 
             #region Edit Area
             //Error Check
-            if (currentLD.size.x < 0) return;
-            if (currentLD.size.y < 0) return;
+            if (currentLD.Size.x < 0) return;
+            if (currentLD.Size.y < 0) return;
             //Grid Size check
             if (topoTypeProp.arraySize != width * height) topoTypeProp.arraySize = width * height;
 
@@ -154,17 +152,17 @@ namespace RiverFlow.LD
                 float spaceWidth = totalSpaceWitdh / ((float)width + 1);
 
                 float curY = gridArea.y;
-                for (int y = 0; y < currentLD.size.y; y++)
+                for (int y = 0; y < currentLD.Size.y; y++)
                 {
                     curY += spaceWidth;
 
                     float curX = gridArea.x;
-                    for (int x = 0; x < currentLD.size.x; x++)
+                    for (int x = 0; x < currentLD.Size.x; x++)
                     {
                         curX += spaceWidth;
                         Rect rect = new Rect(curX, curY, cellWidth, cellWidth);
                         curX += cellWidth;
-                        int tileIndex = y * currentLD.size.x + x;
+                        int tileIndex = y * currentLD.Size.x + x;
 
                         //Utilisateur peint
                         if (nextRect.y != 0)
@@ -173,14 +171,14 @@ namespace RiverFlow.LD
                             {
                                 if (isClicking)
                                 {
-                                    int clikedIndex = y * currentLD.size.x + x;
+                                    int clikedIndex = y * currentLD.Size.x + x;
                                     for (int xx = -Mathf.FloorToInt((float)brushSize / 2f); xx < Mathf.CeilToInt((float)brushSize / 2f); xx++)
                                     {
                                         for (int yy = -Mathf.FloorToInt((float)brushSize / 2f); yy < Mathf.CeilToInt((float)brushSize / 2f); yy++)
                                         {
                                             if ( y + yy < 0 || sizeProp.vector2IntValue.y <= y + yy) continue;
                                             if ( x + xx < 0 || sizeProp.vector2IntValue.x <= x + xx) continue;
-                                            clikedIndex = (y + yy) * currentLD.size.x + (x + xx);
+                                            clikedIndex = (y + yy) * currentLD.Size.x + (x + xx);
                                             topoTypeProp.GetArrayElementAtIndex(clikedIndex).enumValueIndex = selectedTileType.enumValueIndex;
                                         }
                                     }

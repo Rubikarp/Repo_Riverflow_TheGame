@@ -132,6 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 153147743}
+  - component: {fileID: 153147744}
   - component: {fileID: 153147742}
   m_Layer: 0
   m_Name: ===Level===
@@ -152,24 +153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7598748d319661247ace7c098897e7e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  showTopo: 1
   grid: {fileID: 1347921097}
-  mapData: {fileID: 11400000, guid: b69d4acee493d24418af134703e9b667, type: 2}
-  showTopo: 0
-  onLoadEnd:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 538063027}
-        m_TargetAssemblyTypeName: RiverFlow.Core.LevelDrawer, Assembly-CSharp
-        m_MethodName: UpdateMapVisual
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
+  tileGrid:
+    size: {x: 60, y: 32}
 --- !u!4 &153147743
 Transform:
   m_ObjectHideFlags: 0
@@ -187,6 +174,21 @@ Transform:
   m_Father: {fileID: 1044871884}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &153147744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153147741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04d6508a50f42744f9cd66f5fc6c4aff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapToLoad: {fileID: 11400000, guid: 1291877159dda7c4c9a3c3a87a1e1a5c, type: 2}
+  levelHandler: {fileID: 153147742}
+  levelDrawer: {fileID: 538063027}
 --- !u!1 &392054612
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00b27f2dc4e358438c6fc3973da6396, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: {fileID: 153147742}
+  grid: {fileID: 1347921097}
   visual: {fileID: 538063026}
 --- !u!1 &843409586
 GameObject:
