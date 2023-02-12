@@ -13,6 +13,9 @@ namespace RiverFlow.LD
         SerializedProperty gridSize;
         SerializedProperty typePalette;
 
+        bool showLoadTexture = true;
+        Sprite textureToLoad;
+
         // Start like
         private void OnEnable()
         {
@@ -47,6 +50,20 @@ namespace RiverFlow.LD
                 {
                     UpdateColor();
                     serializedObject.ApplyModifiedProperties();
+                }
+            }
+            
+            showLoadTexture = EditorGUILayout.Foldout(showLoadTexture, "Load Texture");
+            if (showLoadTexture)
+            {
+                using (new GUILayout.VerticalScope())
+                {
+                    textureToLoad = EditorGUILayout.ObjectField("TextureToLoad", textureToLoad, typeof(Sprite), false) as Sprite;
+                    if (GUILayout.Button("Load To Texture", EditorStyles.miniButton, GUILayout.Height(3 * EditorGUIUtility.singleLineHeight)))
+                    {
+                        MapData data = (MapData)target;
+                        data.LoadMapTexture(textureToLoad.texture);
+                    }
                 }
             }
 

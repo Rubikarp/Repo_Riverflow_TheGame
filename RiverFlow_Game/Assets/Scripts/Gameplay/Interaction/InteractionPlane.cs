@@ -75,7 +75,7 @@ namespace RiverFlow.Gameplay.Interaction
         {
             using (new Handles.DrawingScope(debugColor))
             {
-                Extension_Handles.DrawWireSquare(area.center, area.size);
+                Extension_Handles.DrawWireSquare(area.center, area.size, 5f);
             }
         }
 #endif

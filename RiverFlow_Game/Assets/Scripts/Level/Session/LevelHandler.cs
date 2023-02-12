@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine.Events;
 using System.Linq;
 using RiverFlow.LD;
 using NaughtyAttributes;
@@ -19,6 +20,7 @@ namespace RiverFlow.Core
 
         public bool showTopo;
         private static DataGrid<TileData> InitTopo() => new DataGrid<TileData>(new Vector2Int(60, 32));
+        public UnityEvent onLoadEnd;
         
         private void Awake()
         {
@@ -38,6 +40,7 @@ namespace RiverFlow.Core
                     topology.Tiles[x, y].topology = mapData.Topology[x, y];
                 }
             }
+            onLoadEnd?.Invoke();
         }
 
 

@@ -61,13 +61,34 @@ namespace RiverFlow.LD
                             mapTexture.SetPixel(x, y, Color.clear);
                             break;
                     }
-
-            mapTexture.filterMode = FilterMode.Point;
-            mapTexture.wrapMode = TextureWrapMode.Clamp;
             //Save la modification
             mapTexture.Apply();
 
+            mapTexture.filterMode = FilterMode.Point;
+            mapTexture.wrapMode = TextureWrapMode.Clamp;
+
             return mapTexture;
+        }
+        public void LoadMapTexture(Texture2D texture)
+        {
+            size = new Vector2Int(texture.width, texture.height);
+            topology = new TileTopology[size.x * size.y];
+
+            Color readPixel;
+            for (int y = 0; y < size.y; y++)
+            {
+                for (int x = 0; x < size.x; x++)
+                {
+                    readPixel = texture.GetPixel(x, y).linear;
+                    Debug.Log(readPixel);
+
+                    if (readPixel.a < .1) topology[x + ((size.y - 1 - y) * size.x)] = TileTopology.Mountain;
+                    else if (readPixel.r > .8) topology[x + ((size.y - 1 - y) * size.x)] = TileTopology.Sand;
+                    else if (readPixel.g > .8) topology[x + ((size.y - y - 1) * size.x)] = TileTopology.Grass;
+                    else if (readPixel.b > .8) topology[x + ((size.y - 1 - y) * size.x)] = TileTopology.Clay;
+                    else topology[x + (y * size.x)] = TileTopology.Mountain;
+                }
+            }
         }
 
 #if UNITY_EDITOR
