@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7598748d319661247ace7c098897e7e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showTopo: 1
+  showTopo: 0
   grid: {fileID: 1347921097}
   tileGrid:
     size: {x: 60, y: 32}
