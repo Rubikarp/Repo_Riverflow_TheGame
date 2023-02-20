@@ -23,6 +23,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: f91685c0141c89e4b840efa426377950, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MapTexture:
+        m_Texture: {fileID: 2800000, guid: 21b5ea8a208c1bd419c104fb6277ce88, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MapZone_975ccc90aa2e47dea061af92d5bf8eef_Texture2Dcb7d49abc813499286a0297cddcc9757_1488460040:
         m_Texture: {fileID: 2800000, guid: 2e5e51729b611714b868b67bff18cb4e, type: 3}
         m_Scale: {x: 1, y: 1}
