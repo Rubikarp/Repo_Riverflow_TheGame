@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace RiverFlow.Core
 {
-    public class TimeManager : Singleton<TimeManager>
+    public class TimeManager : SingletonMonoBehaviour<TimeManager>
     {
         [Header("Parameter")]
         private float _gameSpeed = 1f;

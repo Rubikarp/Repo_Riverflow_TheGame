@@ -8,7 +8,7 @@ namespace RiverFlow.Core
 {
     public class RiverManager : MonoBehaviour
     {
-        [SerializeField, Required] MapHandler map;
+        [SerializeField, Required] DataGrid<TileData> map;
         [SerializeField, Required] TimeManager time;
         [SerializeField, Required] LinkHandler link;
 
@@ -21,13 +21,13 @@ namespace RiverFlow.Core
                 //FlowStep();
             }
         }
-
+        
         private void LinkConfirmed(Vector2Int startTile, Vector2Int endTile)
         {
-            switch (map.GetTile(startTile).linkAmount)
+            switch (map.GetData(startTile).LinkAmount)
             {
                 case 0:
-                    switch (map.GetTile(endTile).linkAmount)
+                    switch (map.GetData(endTile).LinkAmount)
                     {
                         case 0: //in a void
                             Link0To0(startTile, endTile);
@@ -41,7 +41,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 case 1:
-                    switch (map.GetTile(endTile).linkAmount)
+                    switch (map.GetData(endTile).LinkAmount)
                     {
                         case 0: //in a void
                             //Link1To0(startTile, endTile);
@@ -55,7 +55,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 default: // 2 ou +
-                    switch (map.GetTile(endTile).linkAmount)
+                    switch (map.GetData(endTile).LinkAmount)
                     {
                         case 0: //in a void
                             //Link2To0(startTile, endTile);
@@ -70,7 +70,7 @@ namespace RiverFlow.Core
                     break;
             }
         }
-
+        
         private void Link0To0(Vector2Int startTile, Vector2Int endTile)
         {
             throw new NotImplementedException();

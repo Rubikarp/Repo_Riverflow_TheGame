@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using NaughtyAttributes;
 using UnityEngine.Events;
+using RiverFlow.Gameplay.Interaction;
 
 namespace RiverFlow.Core
 {
@@ -9,7 +10,7 @@ namespace RiverFlow.Core
     {
         [ReadOnly, SerializeField] private InputHandler input;
         [ReadOnly, SerializeField] private WorldGrid grid;
-        [Required, SerializeField] private MapHandler map;
+        //[Required, SerializeField] private MapHandler map;
 
         [Header("Digging")]
         [SerializeField] public Vector2Int startSelectTile;
@@ -165,7 +166,7 @@ namespace RiverFlow.Core
                 startSelectTilePos = grid.TileToPos(endSelectTile);
             }
         }
-        public void OnRelease(InputMode mode)
+        public void OnRelease(InputMode mode, Vector3 pos)
         {
             //Clear
             startSelectTile = Vector2Int.zero;

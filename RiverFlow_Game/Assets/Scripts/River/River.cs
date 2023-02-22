@@ -51,19 +51,10 @@ namespace RiverFlow.Core
         public Vector2Int tile;
         public FlowStrenght flow;
 
-        public RiverData(Vector2Int tile, FlowStrenght flow = FlowStrenght._0___)
+        public RiverData(Vector2Int tile, FlowStrenght flow = FlowStrenght._00_)
         {
             this.tile = tile;
             this.flow = flow;
         }
-    }
-
-    public enum FlowStrenght
-    {
-        _0___ = 0,
-        _25__ = 1,
-        _50__ = 2,
-        _75__ = 3,
-        _100_ = 4
     }
 }

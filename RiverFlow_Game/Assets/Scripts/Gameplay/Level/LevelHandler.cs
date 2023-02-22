@@ -18,20 +18,21 @@ namespace RiverFlow.Core
 
         [Header("Component")]
         public WorldGrid grid;
-        [HideInInspector] public TileGrid tileGrid = new TileGrid(new Vector2Int(60, 32));
+        [HideInInspector] public DataGrid<TileData> tileGrid = new DataGrid<TileData>(new Vector2Int(60, 32));
 
 
         public void LoadMap(MapData mapData)
         {
-            tileGrid = new TileGrid(mapData.Size);
+            tileGrid = new DataGrid<TileData>(mapData.Size);
             for (int x = 0; x < tileGrid.Size.x; x++)
             {
                 for (int y = 0; y < tileGrid.Size.y; y++)
                 {
-                    tileGrid.GetTile(x, y).topology = mapData.GetTopology(x, y);
+                    tileGrid.GetData(x, y).topology = mapData.GetTopology(x, y);
                 }
             }
         }
+
 
 
 #if UNITY_EDITOR
@@ -61,7 +62,7 @@ namespace RiverFlow.Core
                 {
                     for (int y = 0; y < tileGrid.Size.y; y++)
                     {
-                        Handles.color = FromTopo(tileGrid.GetTile(x, y).topology);
+                        Handles.color = FromTopo(tileGrid.GetData(x, y).topology);
                         Extension_Handles.DrawWireSquare(startPos + new Vector3(x * grid.cellSize, y * grid.cellSize, 0) + new Vector3(halfCell, halfCell, 0), (Vector3)Vector2.one * grid.cellSize * 0.75f);
                     }
                 }
