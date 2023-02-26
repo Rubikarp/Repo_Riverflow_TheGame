@@ -33,7 +33,20 @@ namespace RiverFlow.Core
             }
         }
 
+        public void WaterStep()
+        {
+            ComputeFlow();
+            ComputeIrig();
 
+        }
+        public void ComputeFlow()
+        {
+
+        }
+        public void ComputeIrig()
+        {
+
+        }
 
 #if UNITY_EDITOR
         protected void OnDrawGizmos()

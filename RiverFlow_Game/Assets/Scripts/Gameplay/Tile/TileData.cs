@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 namespace RiverFlow.Core
 {
@@ -8,7 +9,7 @@ namespace RiverFlow.Core
     {
         [Header("Param")]
         public Vector2Int gridPos;
-        [HideInInspector] public TileData[] neighboor = new TileData[8];
+        //[HideInInspector] public TileData[] neighboor = new TileData[8];
 
         [Header("State")]
         public TileTopology topology = TileTopology.Grass;

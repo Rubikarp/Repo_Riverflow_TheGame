@@ -9,7 +9,6 @@ namespace RiverFlow.Core
         [SerializeField] private WorldGrid grid;
         [SerializeField] private SpriteRenderer visual;
 
-        [Button]
         public void UpdateMapVisual(MapData mapData)
         {
             render = visual;

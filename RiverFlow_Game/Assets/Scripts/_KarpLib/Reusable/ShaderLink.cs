@@ -8,6 +8,8 @@ namespace RiverFlow.Core
         protected Renderer render = null;
         private MaterialPropertyBlock propBlock = null;
 
+        protected virtual void Awake() => render = GetComponent<Renderer>();
+
         private void GetData(Renderer render, ref MaterialPropertyBlock propBlock)
         {
             //permet d'overide les param sans modif le mat ou créer d'instance
