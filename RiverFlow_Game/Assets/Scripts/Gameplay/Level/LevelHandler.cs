@@ -18,17 +18,16 @@ namespace RiverFlow.Core
 
         [Header("Component")]
         public WorldGrid grid;
-        [HideInInspector] public DataGrid<TileData> tileGrid = new DataGrid<TileData>(new Vector2Int(60, 32));
-
+        public TileGrid tileGrid;
 
         public void LoadMap(MapData mapData)
         {
-            tileGrid = new DataGrid<TileData>(mapData.Size);
+            tileGrid = new TileGrid(mapData.Size);
             for (int x = 0; x < tileGrid.Size.x; x++)
             {
                 for (int y = 0; y < tileGrid.Size.y; y++)
                 {
-                    tileGrid.GetData(x, y).topology = mapData.GetTopology(x, y);
+                    tileGrid.SetTopo(mapData[x, y], x, y);
                 }
             }
         }
@@ -52,15 +51,15 @@ namespace RiverFlow.Core
         protected void OnDrawGizmos()
         {
             if (!showTopo) return;
-            Color FromTopo(TileTopology topo)
+            Color FromTopo(Topology topo)
             {
                 switch (topo)
                 {
-                    case TileTopology.Grass: return Color.green;
-                    case TileTopology.Clay: return Color.red;
-                    case TileTopology.Sand: return Color.yellow;
-                    case TileTopology.Mountain: return Color.grey;
-                    case TileTopology.None: return Color.magenta;
+                    case Topology.Grass: return Color.green;
+                    case Topology.Clay: return Color.red;
+                    case Topology.Sand: return Color.yellow;
+                    case Topology.Mountain: return Color.grey;
+                    case Topology.None: return Color.magenta;
                     default: return Color.magenta;
                 }
             }
@@ -75,7 +74,7 @@ namespace RiverFlow.Core
                 {
                     for (int y = 0; y < tileGrid.Size.y; y++)
                     {
-                        Handles.color = FromTopo(tileGrid.GetData(x, y).topology);
+                        Handles.color = FromTopo(tileGrid[x, y].topology);
                         Extension_Handles.DrawWireSquare(startPos + new Vector3(x * grid.cellSize, y * grid.cellSize, 0) + new Vector3(halfCell, halfCell, 0), (Vector3)Vector2.one * grid.cellSize * 0.75f);
                     }
                 }

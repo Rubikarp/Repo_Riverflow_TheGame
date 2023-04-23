@@ -18,7 +18,7 @@ namespace RiverFlow.Core
         public PlantState currentState = PlantState.Young_;
         private bool IsAlive => currentState != PlantState.Dead__;
 
-        public Plant() : base(1) { }
+        public Plant(Vector2Int pos) : base(pos) { }
 
         //public Coroutine ScoreLoop
         //public UnityEvent<PlantState> onScore;

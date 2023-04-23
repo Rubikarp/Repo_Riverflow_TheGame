@@ -8,26 +8,26 @@ namespace RiverFlow.Core
 {
     public class RiverManager : MonoBehaviour
     {
-        [SerializeField, Required] DataGrid<TileData> map;
+        [SerializeField, Required] TileGrid map;
         [SerializeField, Required] TimeManager time;
         [SerializeField, Required] LinkHandler link;
 
         private void OnLink(Vector2Int startTile, Vector2Int endTile)
         {
-            LinkConfirmed(startTile, endTile);
+            //LinkConfirmed(startTile, endTile);
             //inventory.digAmmount--;
             if (!time.isPaused)
             {
                 //FlowStep();
             }
         }
-        
+        /*
         private void LinkConfirmed(Vector2Int startTile, Vector2Int endTile)
         {
-            switch (map.GetData(startTile).LinkAmount)
+            switch (map[startTile].LinkAmount)
             {
                 case 0:
-                    switch (map.GetData(endTile).LinkAmount)
+                    switch (map[endTile].LinkAmount)
                     {
                         case 0: //in a void
                             Link0To0(startTile, endTile);
@@ -41,7 +41,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 case 1:
-                    switch (map.GetData(endTile).LinkAmount)
+                    switch (map[endTile].LinkAmount)
                     {
                         case 0: //in a void
                             //Link1To0(startTile, endTile);
@@ -55,7 +55,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 default: // 2 ou +
-                    switch (map.GetData(endTile).LinkAmount)
+                    switch (map[endTile].LinkAmount)
                     {
                         case 0: //in a void
                             //Link2To0(startTile, endTile);
@@ -70,7 +70,7 @@ namespace RiverFlow.Core
                     break;
             }
         }
-        
+        */
         private void Link0To0(Vector2Int startTile, Vector2Int endTile)
         {
             throw new NotImplementedException();

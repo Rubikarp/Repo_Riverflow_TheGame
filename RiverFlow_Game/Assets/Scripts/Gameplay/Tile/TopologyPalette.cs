@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RiverFlow.Core
 {
-    public class TileTopologyPalette : SingletonSCO<TileTopologyPalette>
+    public class TopologyPalette : SingletonSCO<TopologyPalette>
     {
         [Header("Ground")]
         [ColorUsage(true, false)] public Color holedGround = Color.gray;
@@ -15,19 +15,19 @@ namespace RiverFlow.Core
         [Header("BackUp")]
         [ColorUsage(true, false)] public Color errorMat = Color.magenta;
 
-        public Color FromTopo(TileTopology topo)
+        public Color FromTopo(Topology topo)
         {
             switch (topo)
             {
-                case TileTopology.Grass:
+                case Topology.Grass:
                     return grass;
-                case TileTopology.Clay:
+                case Topology.Clay:
                     return clay;
-                case TileTopology.Sand:
+                case Topology.Sand:
                     return aride;
-                case TileTopology.Mountain:
+                case Topology.Mountain:
                     return mountain;
-                case TileTopology.None:
+                case Topology.None:
                     return errorMat;
                 default:
                     return errorMat;

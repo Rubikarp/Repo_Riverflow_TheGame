@@ -9,7 +9,7 @@
         _100_ = 4
     }
 
-    public enum TileTopology
+    public enum Topology
     {
         None = 0,
         Grass = 1,

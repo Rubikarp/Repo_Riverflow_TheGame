@@ -21,7 +21,7 @@ namespace RiverFlow.Core
 
 		public static void OnProviderGUI(string context)
 		{
-			TileTopologyPalette trs = Resources.Load("TileTopologyPalette") as TileTopologyPalette;
+			TopologyPalette trs = Resources.Load("TileTopologyPalette") as TopologyPalette;
 			if (trs is null)
 			{
 				trs = CreateSettingsAsset();
@@ -33,7 +33,7 @@ namespace RiverFlow.Core
 			editor.OnInspectorGUI();
 		}
 
-		public static TileTopologyPalette CreateSettingsAsset()
+		public static TopologyPalette CreateSettingsAsset()
 		{
 			var path = KarpToolUtilities.FindScriptFolder("TileTopologyPalette", true);
 			if (!AssetDatabase.IsValidFolder(path + "Resources/"))
@@ -44,7 +44,7 @@ namespace RiverFlow.Core
 			}
 			path += "Resources/TileTopologyPalette.asset";
 			Debug.Log(path);
-			var trs = ScriptableObject.CreateInstance<TileTopologyPalette>();
+			var trs = ScriptableObject.CreateInstance<TopologyPalette>();
 			AssetDatabase.CreateAsset(trs, path);
 			//
 			AssetDatabase.SaveAssets();

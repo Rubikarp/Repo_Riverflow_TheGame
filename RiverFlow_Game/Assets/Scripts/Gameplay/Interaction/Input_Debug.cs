@@ -15,20 +15,19 @@ namespace RiverFlow.Gameplay.Interaction
             switch (mode)
             {
                 case InputMode.Dig:
-                    map.tileGrid.GetData(tile).topology = TileTopology.Clay;
+                    map.tileGrid.SetTopo(Topology.Clay, tile);
                     break;
                 case InputMode.Erase:
-                    map.tileGrid.GetData(tile).topology = TileTopology.Sand;
+                    map.tileGrid.SetTopo(Topology.Sand, tile);
                     break;
                 case InputMode.Cloud | InputMode.Lake | InputMode.Source:
-                    map.tileGrid.GetData(tile).topology = TileTopology.Mountain;
+                    map.tileGrid.SetTopo(Topology.Mountain, tile);
                     break;
                 default:
-                    map.tileGrid.GetData(tile).topology = TileTopology.Grass;
+                    map.tileGrid.SetTopo(Topology.Grass, tile);
                     break;
             }
         }
-
 
         private Color ModeColor(InputMode mode)
         {

@@ -99,7 +99,7 @@ namespace RiverFlow.LD
 
         public void UpdateColor()
         {
-            var palette = TileTopologyPalette.Instance;
+            var palette = TopologyPalette.Instance;
 
             typePalette.GetArrayElementAtIndex(0).colorValue = palette.errorMat;
             typePalette.GetArrayElementAtIndex(1).colorValue = palette.grass;
