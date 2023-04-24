@@ -4,6 +4,7 @@ using Unity.Burst;
 using UnityEngine.Jobs;
 using Unity.Collections;
 using System.Collections;
+using System.Linq;
 
 namespace RiverFlow.Core
 {
@@ -17,7 +18,6 @@ namespace RiverFlow.Core
         // Define an indexer (https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/indexers/?redirectedfrom=MSDN)
         public TileData this[Vector2Int pos] { get { return this[pos.x, pos.y]; } }
         public TileData this[int x, int y] { get { return tiles[x + y * size.x]; } }
-
 
         #region Topology
         public void SetTopo(Topology topo, Vector2Int pos) => SetTopo(topo, pos.x, pos.y);
