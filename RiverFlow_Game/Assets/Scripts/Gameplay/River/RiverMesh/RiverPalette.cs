@@ -17,7 +17,7 @@ namespace RiverFlow.Core
         [Header("BackUp")]
         [ColorUsage(true, false)] public Color errorMat = Color.magenta;
 
-        public Color FromIrrig(FlowStrenght irrigation)
+        public Color FromIrrigation(FlowStrenght irrigation)
         {
             switch (irrigation)
             {

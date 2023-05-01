@@ -14,6 +14,36 @@ namespace RiverFlow.Core
 {
     public class LevelHandler : SingletonMonoBehaviour<LevelHandler>
     {
+        static readonly Vector2Int[] lookPosDist1 = new Vector2Int[] {
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 1),
+            new Vector2Int(1, 0),
+            new Vector2Int(1, -1),
+            new Vector2Int(0, -1),
+            new Vector2Int(-1,-1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(-1, 1),
+        };
+        static readonly Vector2Int[] lookPosDist2 = new Vector2Int[] {
+            new Vector2Int( 0, 2),
+            new Vector2Int( 1, 2),
+            new Vector2Int( 2, 2),
+            new Vector2Int( 2, 1),
+            new Vector2Int( 2, 0),
+            new Vector2Int( 2,-1),
+            new Vector2Int( 2,-2),
+            new Vector2Int( 1,-2),
+            new Vector2Int( 0,-2),
+            new Vector2Int(-1,-2),
+            new Vector2Int(-2,-2),
+            new Vector2Int(-2,-1),
+            new Vector2Int(-2, 0),
+            new Vector2Int(-2, 1),
+            new Vector2Int(-2, 2),
+            new Vector2Int(-1, 2),
+        };
+
+
         public bool showTopo;
         public bool showIrrigation;
 
@@ -33,6 +63,12 @@ namespace RiverFlow.Core
             }
         }
 
+        private void Update()
+        {
+            WaterStep();
+        }
+
+        [Button]
         public void WaterStep()
         {
             ComputeFlow();
@@ -41,36 +77,74 @@ namespace RiverFlow.Core
         }
         public void ComputeFlow()
         {
+            Vector2Int gridPos;
+            Vector2Int lookPos;
+            FlowStrenght flow;
 
+            //Record currentFlow
+            for (int x = 0; x < tileGrid.Size.x; x++)
+                for (int y = 0; y < tileGrid.Size.y; y++)
+                {
+                    gridPos = tileGrid[x, y].gridPos;
+                    tileGrid.RegisterPreviousFlow(gridPos);
+                }
+            //Compute new Flow
+            for (int x = 0; x < tileGrid.Size.x; x++)
+                for (int y = 0; y < tileGrid.Size.y; y++)
+                {
+                    flow = FlowStrenght._00_;
+                    gridPos = new Vector2Int(x, y);
+
+                    for (int i = 0; i < tileGrid[gridPos].riverIn.Count; i++)
+                    {
+                        lookPos = gridPos + tileGrid[gridPos].riverIn[i];
+                        if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= tileGrid.Size.x || lookPos.y >= tileGrid.Size.y) continue;
+                        flow += (int)tileGrid[lookPos].previousFlow;
+                    }
+
+                    if (tileGrid[gridPos].element != null)
+                    {
+                        flow += (int)tileGrid[gridPos].element.irrigationLvl;
+                    }
+
+                    flow = (FlowStrenght)Mathf.Clamp((int)flow, 0, 4);
+                    tileGrid.SetCurrentFlow(flow, gridPos);
+                }
         }
         public void ComputeIrig()
         {
+            Vector2Int gridPos;
+            FlowStrenght flow;
 
-        }
+            for (int x = 0; x < tileGrid.Size.x; x++)
+                for (int y = 0; y < tileGrid.Size.y; y++)
+                {
+                    flow = FlowStrenght._00_;
+                    gridPos = new Vector2Int(x, y);
 
-        Color FromTopo(Topology topo)
-        {
-            switch (topo)
-            {
-                case Topology.Grass: return Color.green;
-                case Topology.Clay: return Color.red;
-                case Topology.Sand: return Color.yellow;
-                case Topology.Mountain: return Color.grey;
-                case Topology.None: return Color.magenta;
-                default: return Color.magenta;
-            }
-        }
-        Color FromIrrigation(FlowStrenght flow)
-        {
-            switch (flow)
-            {
-                case FlowStrenght._00_: return Color.black;
-                case FlowStrenght._25_: return Color.grey;
-                case FlowStrenght._50_: return Color.cyan;
-                case FlowStrenght._75_: return Color.blue;
-                case FlowStrenght._100_: return Color.white;
-                default: return Color.magenta;
-            }
+                    if(tileGrid[gridPos].currentFlow == FlowStrenght._100_)
+                    {
+                        tileGrid.SetCurrentFlow(FlowStrenght._100_, gridPos);
+                        continue;
+                    }
+                    foreach (var lookPos in lookPosDist2)
+                    {
+                        if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= tileGrid.Size.x || lookPos.y >= tileGrid.Size.y) continue;
+                        if (tileGrid[lookPos].element is Lake)
+                        {
+                            tileGrid.SetCurrentFlow(FlowStrenght._100_, gridPos);
+                            continue;
+                        }
+                    }
+                    foreach (var lookPos in lookPosDist1)
+                    {
+                        if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= tileGrid.Size.x || lookPos.y >= tileGrid.Size.y) continue;
+                        flow += (int)tileGrid[lookPos].currentFlow;
+                    }
+
+                    flow = (FlowStrenght)Mathf.Clamp((int)flow, 0, 4);
+                    tileGrid.SetCurrentFlow(flow, gridPos);
+                }
         }
 
 #if UNITY_EDITOR
@@ -85,22 +159,24 @@ namespace RiverFlow.Core
             {
                 if (showTopo)
                 {
+                    var palette = Resources.Load("TopologyPalette") as TopologyPalette;
                     for (int x = 0; x < tileGrid.Size.x; x++)
                     {
                         for (int y = 0; y < tileGrid.Size.y; y++)
                         {
-                            Handles.color = FromTopo(tileGrid[x, y].topology);
+                            Handles.color = palette.FromTopo(tileGrid[x, y].topology);
                             Extension_Handles.DrawWireSquare(startPos + new Vector3(x * grid.cellSize, y * grid.cellSize, 0) + new Vector3(halfCell, halfCell, 0), (Vector3)Vector2.one * grid.cellSize * 0.75f);
                         }
                     }
                 }
                 if (showIrrigation)
                 {
+                    var palette = Resources.Load("RiverPalette") as RiverPalette;
                     for (int x = 0; x < tileGrid.Size.x; x++)
                     {
                         for (int y = 0; y < tileGrid.Size.y; y++)
                         {
-                            Handles.color = FromIrrigation(tileGrid[x, y].currentFlow);
+                            Handles.color = palette.FromIrrigation(tileGrid[x, y].currentFlow);
                             Handles.DrawWireDisc(startPos + new Vector3(x * grid.cellSize, y * grid.cellSize, 0) + new Vector3(halfCell, halfCell, 0), Vector3.back, grid.cellSize * 0.25f);
                         }
                     }

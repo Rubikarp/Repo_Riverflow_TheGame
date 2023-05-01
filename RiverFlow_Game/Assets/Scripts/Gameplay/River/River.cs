@@ -22,7 +22,12 @@ namespace RiverFlow.Core
         public Vector2Int endNode => riverTiles.Last();
         public int Lenght => riverTiles.Count;
 
-        public void Reverse() { riverTiles.Reverse(); }
+        public void Reverse() 
+        {
+            this.UnlinkToGrid();
+            riverTiles.Reverse();
+            this.LinkToGrid();
+        }
 
 
         [Button]

@@ -21,7 +21,7 @@ namespace RiverFlow.Core
         {
             get
             {
-                if (_riverPalette is null) _riverPalette = RiverPalette.Instance;
+                if (_riverPalette is null) _riverPalette = Resources.Load("RiverPalette") as RiverPalette;
                 return _riverPalette;
             }
         }
@@ -34,7 +34,7 @@ namespace RiverFlow.Core
             result = tilesGridPos.Select(
                 gridPos => new RiverPoint(
                     level.grid.TileToPos(gridPos),
-                    riverPalette.FromIrrig(level.tileGrid[gridPos].currentFlow))
+                    riverPalette.FromIrrigation(level.tileGrid[gridPos].currentFlow))
                 ).ToList();
 
             return result;
