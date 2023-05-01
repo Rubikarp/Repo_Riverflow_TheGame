@@ -13,13 +13,13 @@ namespace RiverFlow.Core
         [SerializeField, Required] LinkHandler link;
 
         [SerializeField, Required] River riverPrefab;
-        [SerializeField, Required] List<River> allRiver;
+        [SerializeField] List<River> allRiver;
 
 
         public void OnLink(Vector2Int startTile, Vector2Int endTile)
         {
             Debug.Log(startTile);
-            LinkConfirmed(startTile, endTile);
+            Link0To0(startTile, endTile);
             //inventory.digAmmount--;
             if (!time.isPaused)
             {
@@ -79,9 +79,8 @@ namespace RiverFlow.Core
         private void Link0To0(Vector2Int startTile, Vector2Int endTile)
         {
             River newRiver = Instantiate(riverPrefab, Vector3.zero, Quaternion.identity, transform);
-            newRiver = new River(startTile, endTile);
+            newRiver.Initialised(startTile, endTile);
             allRiver.Add(newRiver);
-
 
         }
 

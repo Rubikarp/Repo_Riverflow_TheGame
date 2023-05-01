@@ -1,31 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RiverFlow.Core
 {
     public static class RiverExtension
     {
-        /*
-        private static MapHandler _map;
-        public static MapHandler map
+        private static LevelHandler _level;
+        public static LevelHandler level
         {
             get
             {
-                if (_map is null) _map = MapHandler.Instance;
-                return _map;
+                if (_level is null) _level = LevelHandler.Instance;
+                return _level;
             }
         }
-        */
-
-        public static River GenerateRiverCanal(Vector2Int start, Vector2Int end)
+        private static RiverPalette _riverPalette;
+        public static RiverPalette riverPalette
         {
-            River river = new River(start, end);
+            get
+            {
+                if (_riverPalette is null) _riverPalette = RiverPalette.Instance;
+                return _riverPalette;
+            }
+        }
 
-            //map.GetTile(start).rivers = new List<River>() { river };
-            //map.GetTile(end).rivers = new List<River>() { river };
+        public static List<RiverPoint> River2Point(List<Vector2Int> tilesGridPos)
+        {
+            var result = new List<RiverPoint>();
+            //result = tilesGridPos.Select(gridPos => new RiverPoint(level.grid.TileToPos(gridPos), level.tileGrid[gridPos].irrigation))
+            
+            result = tilesGridPos.Select(
+                gridPos => new RiverPoint(
+                    level.grid.TileToPos(gridPos), 
+                    Color.red)
+                ).ToList();
 
-            return river;
+            return result;
         }
     }
 }

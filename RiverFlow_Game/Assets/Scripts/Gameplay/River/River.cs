@@ -24,17 +24,13 @@ namespace RiverFlow.Core
         public void Reverse() { riverTiles.Reverse(); }
 
 
-        public void Initialised(TileData startNode, TileData endNode) 
-            => Initialised(new List<TileData>() { startNode, endNode });
-        public void Initialised(List<TileData> tiles)
+        public void Initialised(Vector2Int startNode, Vector2Int endNode) 
+            => Initialised(new List<Vector2Int>() { startNode, endNode });
+        public void Initialised(List<Vector2Int> tiles)
         {
-            riverTiles = tiles.Select(x=> x.gridPos).ToList();
-
+            riverTiles = tiles;
             riverMesh = GetComponent<RiverMesh>();
-            var points = tiles.Select(x => new RiverPoint(x.gridPos)).ToList();
-
-
-            //riverMesh.SetPoints(tiles);
+            riverMesh.SetPoints(RiverExtension.River2Point(riverTiles));
         }
     }
 }

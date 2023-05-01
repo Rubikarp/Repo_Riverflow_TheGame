@@ -22,7 +22,6 @@ namespace RiverFlow.Core
         [Foldout("Mesh Data"), SerializeField, ReadOnly] private Vector3[] vertices = new Vector3[6];
         [Foldout("Mesh Data"), SerializeField, ReadOnly] private Color[] vertexColors = new Color[6];
 
-
         public List<RiverPoint> Points
         {
             get => points;
@@ -48,8 +47,18 @@ namespace RiverFlow.Core
         }
 
         public void SetPoints(List<RiverPoint> points) 
-        { 
-            this.points = points;
+        {
+            this.points.Clear();
+            for (int i = 0; i < points.Count-1; i++)
+            {
+                var prevPoint = points[i];
+                var nextPoint = points[i + 1];
+                for (int j = 0; j < settings.subdividePerSegment; j++)
+                {
+                    this.points.Add(RiverPoint.Lerp(prevPoint, nextPoint, i / (float)settings.subdividePerSegment));
+                }
+            }
+            this.points.Add(points.Last());
             UpdateMesh();
         }
 
@@ -110,7 +119,6 @@ namespace RiverFlow.Core
                 nextDir = (points[i + 1].pos - points[i].pos).normalized;
                 dir = (previousDir + nextDir) * 0.5f;
                 right = Vector3.Cross(Vector3.back, dir).normalized;
-                thickness = 0.5f * settings.scale;
                 //
                 vertices[(i * 3) + 0] = points[i].pos;
                 vertices[(i * 3) + 1] = points[i].pos - (right * (thickness + (points[i].lake * settings.lakeScale)));
@@ -123,7 +131,6 @@ namespace RiverFlow.Core
 
             dir = (previousDir + nextDir) * 0.5f;
             right = Vector3.Cross(Vector3.back, dir).normalized;
-            thickness = 0.5f * settings.scale;
             //
             vertices[((pointCount - 1) * 3) + 0] = points[pointCount - 1].pos;
             vertices[((pointCount - 1) * 3) + 1] = points[pointCount - 1].pos - (right * (thickness + (points[pointCount - 1].lake * settings.lakeScale)));
@@ -149,17 +156,18 @@ namespace RiverFlow.Core
             #endregion
             #region UV
             float distTravell = 0;
-            uvs[0] = new Vector4(distTravell, 0.5f, points[0].thickness, points[0].lake);
-            uvs[1] = new Vector4(distTravell, 1.0f, points[0].thickness, points[0].lake);
-            uvs[2] = new Vector4(distTravell, 0.0f, points[0].thickness, points[0].lake);
+
+            uvs[0] = new Vector4(distTravell, 0.5f, thickness, points[0].lake * settings.lakeScale);
+            uvs[1] = new Vector4(distTravell, 1.0f, thickness, points[0].lake * settings.lakeScale);
+            uvs[2] = new Vector4(distTravell, 0.0f, thickness, points[0].lake * settings.lakeScale);
 
             for (int i = 1; i < pointCount; i++)
             {
                 distTravell += (points[i].pos - points[i - 1].pos).magnitude;
 
-                uvs[(i * 3) + 0] = new Vector4(distTravell, 0.5f, points[i].thickness, points[i].lake);
-                uvs[(i * 3) + 1] = new Vector4(distTravell, 1.0f, points[i].thickness, points[i].lake);
-                uvs[(i * 3) + 2] = new Vector4(distTravell, 0.0f, points[i].thickness, points[i].lake);
+                uvs[(i * 3) + 0] = new Vector4(distTravell, 0.5f, thickness, points[i].lake * settings.lakeScale);
+                uvs[(i * 3) + 1] = new Vector4(distTravell, 1.0f, thickness, points[i].lake * settings.lakeScale);
+                uvs[(i * 3) + 2] = new Vector4(distTravell, 0.0f, thickness, points[i].lake * settings.lakeScale);
             }
             #endregion
             #region Triangle
@@ -219,17 +227,18 @@ namespace RiverFlow.Core
             #endregion
             #region UV
             float distTravell = 0;
-            uvs[0] = new Vector4(distTravell, 0.5f, points[0].thickness, points[0].lake);
-            uvs[1] = new Vector4(distTravell, 1.0f, points[0].thickness, points[0].lake);
-            uvs[2] = new Vector4(distTravell, 0.0f, points[0].thickness, points[0].lake);
+            float thickness = 0.5f * settings.scale;
+            uvs[0] = new Vector4(distTravell, 0.5f, thickness, points[0].lake);
+            uvs[1] = new Vector4(distTravell, 1.0f, thickness, points[0].lake);
+            uvs[2] = new Vector4(distTravell, 0.0f, thickness, points[0].lake);
 
             for (int i = 1; i < pointCount; i++)
             {
                 distTravell += (points[i].pos - points[i - 1].pos).magnitude;
 
-                uvs[(i * 3) + 0] = new Vector4(distTravell, 0.5f, points[i].thickness, points[i].lake);
-                uvs[(i * 3) + 1] = new Vector4(distTravell, 1.0f, points[i].thickness, points[i].lake);
-                uvs[(i * 3) + 2] = new Vector4(distTravell, 0.0f, points[i].thickness, points[i].lake);
+                uvs[(i * 3) + 0] = new Vector4(distTravell, 0.5f, thickness, points[i].lake);
+                uvs[(i * 3) + 1] = new Vector4(distTravell, 1.0f, thickness, points[i].lake);
+                uvs[(i * 3) + 2] = new Vector4(distTravell, 0.0f, thickness, points[i].lake);
             }
             #endregion
 
