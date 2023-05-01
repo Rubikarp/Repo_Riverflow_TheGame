@@ -21,6 +21,7 @@ namespace RiverFlow.Core
         public Element element;
         public List<Vector2Int> riverIn;
         public List<Vector2Int> riverOut;
+        public List<River> rivers;
 
         public int LinkAmount => riverOut.Count + riverIn.Count;
         public bool IsOccupied => !(plant is null) || !(element is null);
@@ -39,6 +40,7 @@ namespace RiverFlow.Core
 
             riverIn = new List<Vector2Int>(2);
             riverOut = new List<Vector2Int>(2);
+            rivers = new List<River>(1);
         }
     }
 }

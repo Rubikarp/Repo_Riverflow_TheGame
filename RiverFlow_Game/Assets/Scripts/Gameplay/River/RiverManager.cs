@@ -8,26 +8,31 @@ namespace RiverFlow.Core
 {
     public class RiverManager : MonoBehaviour
     {
-        [SerializeField, Required] TileGrid map;
+        [SerializeField, Required] LevelHandler level;
         [SerializeField, Required] TimeManager time;
         [SerializeField, Required] LinkHandler link;
 
-        private void OnLink(Vector2Int startTile, Vector2Int endTile)
+        [SerializeField, Required] River riverPrefab;
+        [SerializeField, Required] List<River> allRiver;
+
+
+        public void OnLink(Vector2Int startTile, Vector2Int endTile)
         {
-            //LinkConfirmed(startTile, endTile);
+            Debug.Log(startTile);
+            LinkConfirmed(startTile, endTile);
             //inventory.digAmmount--;
             if (!time.isPaused)
             {
                 //FlowStep();
             }
         }
-        /*
+        
         private void LinkConfirmed(Vector2Int startTile, Vector2Int endTile)
         {
-            switch (map[startTile].LinkAmount)
+            switch (level.tileGrid[startTile].LinkAmount)
             {
                 case 0:
-                    switch (map[endTile].LinkAmount)
+                    switch (level.tileGrid[endTile].LinkAmount)
                     {
                         case 0: //in a void
                             Link0To0(startTile, endTile);
@@ -41,7 +46,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 case 1:
-                    switch (map[endTile].LinkAmount)
+                    switch (level.tileGrid[endTile].LinkAmount)
                     {
                         case 0: //in a void
                             //Link1To0(startTile, endTile);
@@ -55,7 +60,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 default: // 2 ou +
-                    switch (map[endTile].LinkAmount)
+                    switch (level.tileGrid[endTile].LinkAmount)
                     {
                         case 0: //in a void
                             //Link2To0(startTile, endTile);
@@ -70,10 +75,14 @@ namespace RiverFlow.Core
                     break;
             }
         }
-        */
+        
         private void Link0To0(Vector2Int startTile, Vector2Int endTile)
         {
-            throw new NotImplementedException();
+            River newRiver = Instantiate(riverPrefab, Vector3.zero, Quaternion.identity, transform);
+            newRiver = new River(startTile, endTile);
+            allRiver.Add(newRiver);
+
+
         }
 
         private void OnEnable()

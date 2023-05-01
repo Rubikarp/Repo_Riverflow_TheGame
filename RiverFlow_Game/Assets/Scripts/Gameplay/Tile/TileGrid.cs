@@ -24,6 +24,11 @@ namespace RiverFlow.Core
         public void SetTopo(Topology topo, int x, int y) => tiles[x + (y * size.x)].topology = topo;
         #endregion Topology
 
+        #region Irrigation
+        public void SetIrrigation(FlowStrenght flow, Vector2Int pos) => SetIrrigation(flow, pos.x, pos.y);
+        public void SetIrrigation(FlowStrenght flow, int x, int y) => tiles[x + (y * size.x)].currentFlow = flow;
+        #endregion Irrigation
+
         #region Element
         public void UnlinkElement(Vector2Int pos) => UnlinkElement(pos.x, pos.y);
         public void UnlinkElement(int x, int y) => tiles[x + (y * size.x)].element = null;

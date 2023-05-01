@@ -6,24 +6,23 @@ using System;
 
 namespace RiverFlow.Core
 {
+    [RequireComponent(typeof(Mesh))]
     [RequireComponent(typeof(MeshFilter))]
     public class RiverMesh : MonoBehaviour
     {
-        private Mesh mesh;
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField, Expandable] private RiverMeshSettings settings;
-        [Header("other")]
-        private TileGrid grid;
-
-        [Header("Mesh Data")]
-        public int[] tris = new int[12];
-        public Vector4[] uvs = new Vector4[6];
-        public Vector3[] normals = new Vector3[6];
-        public Vector3[] vertices = new Vector3[6];
-        public Color[] vertexColors = new Color[6];
-
+        private Mesh mesh;
 
         [SerializeField] private List<RiverPoint> points;
+
+        [Foldout("Mesh Data"), SerializeField, ReadOnly] private int[] tris = new int[12];
+        [Foldout("Mesh Data"), SerializeField, ReadOnly] private Vector4[] uvs = new Vector4[6];
+        [Foldout("Mesh Data"), SerializeField, ReadOnly] private Vector3[] normals = new Vector3[6];
+        [Foldout("Mesh Data"), SerializeField, ReadOnly] private Vector3[] vertices = new Vector3[6];
+        [Foldout("Mesh Data"), SerializeField, ReadOnly] private Color[] vertexColors = new Color[6];
+
+
         public List<RiverPoint> Points
         {
             get => points;
@@ -33,8 +32,8 @@ namespace RiverFlow.Core
                 UpdateMesh();
             }
         }
-        public Nullable<RiverPoint> previousPoint = null;
-        public Nullable<RiverPoint> nextPoint = null;
+        [SerializeField] private Nullable<RiverPoint> previousPoint = null;
+        [SerializeField] private Nullable<RiverPoint> nextPoint = null;
 
 
         public void AddPoint(RiverPoint point) 
@@ -48,19 +47,32 @@ namespace RiverFlow.Core
             UpdateMesh();
         }
 
+        public void SetPoints(List<RiverPoint> points) 
+        { 
+            this.points = points;
+            UpdateMesh();
+        }
+
         private void Awake()
         {
-            settings = RiverMeshSettings.Instance;
             meshFilter = GetComponent<MeshFilter>();
+
+            meshFilter.mesh = mesh;
+            settings = RiverMeshSettings.Instance;
         }
 
         [Button]
         public void UpdateMesh()
         {
-            if (mesh is null) 
-            { mesh = new Mesh(); }
-            else 
-            { mesh.Clear(); }
+            if(mesh == null)
+            {
+                mesh = new Mesh();
+                mesh.Clear();
+            }
+            else
+            {
+                mesh.Clear();
+            }
 
             if (points.Count < 2)
             {
@@ -183,7 +195,7 @@ namespace RiverFlow.Core
         [Button]
         public void UpdateData()
         {
-            if (mesh == null || points.Count < 2)
+            if (mesh is null || points.Count < 2)
             {
                 UpdateMesh();
                 return;
@@ -236,7 +248,6 @@ namespace RiverFlow.Core
         [Header("Data")]
         public Vector3 pos;
         [ColorUsage(true, false)] public Color color;
-        [Range(0f, 2f)] public float thickness;
         public float lake;
 
 
@@ -246,21 +257,12 @@ namespace RiverFlow.Core
         {
             this.pos = pos;
             this.color = Color.white;
-            this.thickness = 1f;
             this.lake = 0.0f;
         }
-        public RiverPoint(Vector3 pos, float thickness = 1f)
-        {
-            this.pos = pos;
-            this.color = Color.white;
-            this.thickness = thickness;
-            this.lake = 0.0f;
-        }
-        public RiverPoint(Vector3 pos, Color col, float thickness = 1f, float lake = 0.0f)
+        public RiverPoint(Vector3 pos, Color col, float lake = 0.0f)
         {
             this.pos = pos;
             this.color = col;
-            this.thickness = thickness;
             this.lake = lake;
         }
         //Vec2 version
@@ -268,28 +270,12 @@ namespace RiverFlow.Core
         {
             this.pos = pos;
             this.color = Color.white;
-            this.thickness = 1f;
             this.lake = 0.0f;
         }
-        public RiverPoint(Vector2 pos, float thickness = 1f)
-        {
-            this.pos = pos;
-            this.color = Color.white;
-            this.thickness = thickness;
-            this.lake = 0.0f;
-        }
-        public RiverPoint(Vector2 pos, Color col, float thickness = 1f)
+        public RiverPoint(Vector2 pos, Color col, float lake = 0.0f)
         {
             this.pos = pos;
             this.color = col;
-            this.thickness = thickness;
-            this.lake = 0.0f;
-        }
-        public RiverPoint(Vector2 pos, Color col, float thickness = 1f, float lake = 0.0f)
-        {
-            this.pos = pos;
-            this.color = col;
-            this.thickness = thickness;
             this.lake = lake;
         }
         #endregion
@@ -299,7 +285,6 @@ namespace RiverFlow.Core
             return new RiverPoint(
                 Vector3.Lerp(a.pos, b.pos, EaseInOutSine(t)),
                 Color.Lerp(a.color, b.color, EaseInOutSine(t)),
-                Mathf.Lerp(a.thickness, b.thickness, EaseInOutSine(t)),
                 Mathf.Lerp(a.lake, b.lake, EaseInOutSine(t))
                 );
         }

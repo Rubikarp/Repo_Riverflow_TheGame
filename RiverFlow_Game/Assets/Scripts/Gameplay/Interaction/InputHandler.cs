@@ -33,9 +33,9 @@ namespace RiverFlow.Gameplay.Interaction
         [Space(5)]
         [Foldout("Switch")] public UnityEvent<InputMode> onModeChange;
         [Space(5)]
-        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputPress;
-        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputMaintain;
-        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputRelease;
+        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputPress = new UnityEvent<InputMode, Vector3>();
+        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputMaintain = new UnityEvent<InputMode, Vector3>();
+        [Foldout("Interaction")] public UnityEvent<InputMode, Vector3> onInputRelease = new UnityEvent<InputMode, Vector3>();
 
         public void Press(Ray ray, bool secondary)
         {

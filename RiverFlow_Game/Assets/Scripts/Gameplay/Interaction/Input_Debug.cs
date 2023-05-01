@@ -12,6 +12,7 @@ namespace RiverFlow.Gameplay.Interaction
         public void onMaintain(InputMode mode, Vector3 pos)
         {
             var tile = WorldGrid.Instance.PosToTile(pos);
+            /*
             switch (mode)
             {
                 case InputMode.Dig:
@@ -26,7 +27,23 @@ namespace RiverFlow.Gameplay.Interaction
                 default:
                     map.tileGrid.SetTopo(Topology.Grass, tile);
                     break;
-            }
+            }*/
+            /*
+            switch (mode)
+            {
+                case InputMode.Dig:
+                    map.tileGrid.SetIrrigation(FlowStrenght._50_ , tile);
+                    break;
+                case InputMode.Erase:
+                    map.tileGrid.SetIrrigation(FlowStrenght._75_, tile);
+                    break;
+                case InputMode.Cloud | InputMode.Lake | InputMode.Source:
+                    map.tileGrid.SetIrrigation(FlowStrenght._100_, tile);
+                    break;
+                default:
+                    map.tileGrid.SetIrrigation(FlowStrenght._00_, tile);
+                    break;
+            }*/
         }
 
         private Color ModeColor(InputMode mode)
