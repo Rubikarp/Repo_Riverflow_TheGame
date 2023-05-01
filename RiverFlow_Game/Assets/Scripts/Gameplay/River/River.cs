@@ -1,7 +1,8 @@
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Linq;
 using System.Collections.Generic;
+using NaughtyAttributes;
 
 namespace RiverFlow.Core
 {
@@ -24,13 +25,20 @@ namespace RiverFlow.Core
         public void Reverse() { riverTiles.Reverse(); }
 
 
-        public void Initialised(Vector2Int startNode, Vector2Int endNode) 
-            => Initialised(new List<Vector2Int>() { startNode, endNode });
+        [Button]
+        public void ReInitialised()
+        {
+            riverTiles = tiles;
+            riverMesh = GetComponent<RiverMesh>();
+            riverMesh.SetPoints(RiverExtension.River2Point(riverTiles));
+        }
+        public void Initialised(Vector2Int startNode, Vector2Int endNode) => Initialised(new List<Vector2Int>() { startNode, endNode });
         public void Initialised(List<Vector2Int> tiles)
         {
             riverTiles = tiles;
             riverMesh = GetComponent<RiverMesh>();
             riverMesh.SetPoints(RiverExtension.River2Point(riverTiles));
         }
+
     }
 }

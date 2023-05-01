@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5b796a0c2e674a4da647a4f751f46d3, type: 3}
   m_Name: RiverMeshSettings
   m_EditorClassIdentifier: 
-  scale: 1
+  scale: 0.5
   lakeScale: 1
-  subdividePerSegment: 4
+  subdividePerSegment: 2

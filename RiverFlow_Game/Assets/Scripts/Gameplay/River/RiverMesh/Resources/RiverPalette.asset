@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927caffd084ed0142a26a382f6c2eaee, type: 3}
   m_Name: RiverPalette
   m_EditorClassIdentifier: 
-  color_00: {r: 0, g: 0, b: 1, a: 1}
-  color_25: {r: 0, g: 0, b: 1, a: 1}
-  color_50: {r: 0, g: 0, b: 1, a: 1}
-  color_75: {r: 0, g: 0, b: 1, a: 1}
-  color_100: {r: 0, g: 0, b: 1, a: 1}
+  color_00: {r: 0.5764706, g: 0.5137255, b: 0.39215687, a: 1}
+  color_25: {r: 0.5019608, g: 0.91699344, b: 1, a: 1}
+  color_50: {r: 0.2980392, g: 0.76601297, b: 1, a: 1}
+  color_75: {r: 0.2980392, g: 0.6490196, b: 1, a: 1}
+  color_100: {r: 0, g: 0.3333335, b: 1, a: 1}
   errorMat: {r: 1, g: 0, b: 1, a: 1}

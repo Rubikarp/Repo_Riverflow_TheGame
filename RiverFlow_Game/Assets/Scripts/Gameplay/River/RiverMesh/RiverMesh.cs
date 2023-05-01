@@ -35,27 +35,28 @@ namespace RiverFlow.Core
         [SerializeField] private Nullable<RiverPoint> nextPoint = null;
 
 
-        public void AddPoint(RiverPoint point) 
-        { 
+        public void AddPoint(RiverPoint point)
+        {
             this.points.Add(point);
             UpdateMesh();
         }
-        public void AddPoints(IEnumerable<RiverPoint> points) 
-        { 
+        public void AddPoints(IEnumerable<RiverPoint> points)
+        {
             this.points.AddRange(points);
             UpdateMesh();
         }
 
-        public void SetPoints(List<RiverPoint> points) 
+        public void SetPoints(List<RiverPoint> points)
         {
+            float subDiv = 1.0f / (float)settings.subdividePerSegment;
             this.points.Clear();
-            for (int i = 0; i < points.Count-1; i++)
+            for (int i = 0; i < points.Count - 1; i++)
             {
                 var prevPoint = points[i];
                 var nextPoint = points[i + 1];
                 for (int j = 0; j < settings.subdividePerSegment; j++)
                 {
-                    this.points.Add(RiverPoint.Lerp(prevPoint, nextPoint, i / (float)settings.subdividePerSegment));
+                    this.points.Add(RiverPoint.Lerp(prevPoint, nextPoint, j * subDiv));
                 }
             }
             this.points.Add(points.Last());
@@ -73,7 +74,7 @@ namespace RiverFlow.Core
         [Button]
         public void UpdateMesh()
         {
-            if(mesh == null)
+            if (mesh == null)
             {
                 mesh = new Mesh();
                 mesh.Clear();
@@ -103,7 +104,7 @@ namespace RiverFlow.Core
 
             #region Vertices
             Vector3 previousDir = (points[1].pos - points[0].pos).normalized;
-            if(!(previousPoint is null)) previousDir = (points[0].pos - previousPoint.Value.pos).normalized;
+            if (!(previousPoint is null)) previousDir = (points[0].pos - previousPoint.Value.pos).normalized;
             Vector3 nextDir = (points[1].pos - points[0].pos).normalized;
             Vector3 dir = (previousDir + nextDir) * 0.5f;
             Vector3 right = Vector3.Cross(Vector3.back, dir).normalized;
@@ -290,6 +291,14 @@ namespace RiverFlow.Core
         #endregion
 
         public static RiverPoint Lerp(RiverPoint a, RiverPoint b, float t)
+        {
+            return new RiverPoint(
+                Vector3.Lerp(a.pos, b.pos, t),
+                Color.Lerp(a.color, b.color, t),
+                Mathf.Lerp(a.lake, b.lake, EaseInOutSine(t))
+                );
+        }
+        public static RiverPoint Lerp_EaseInOut(RiverPoint a, RiverPoint b, float t)
         {
             return new RiverPoint(
                 Vector3.Lerp(a.pos, b.pos, EaseInOutSine(t)),

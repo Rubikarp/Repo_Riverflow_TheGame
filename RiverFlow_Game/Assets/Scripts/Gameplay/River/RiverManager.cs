@@ -18,8 +18,7 @@ namespace RiverFlow.Core
 
         public void OnLink(Vector2Int startTile, Vector2Int endTile)
         {
-            Debug.Log(startTile);
-            Link0To0(startTile, endTile);
+            LinkConfirmed(startTile, endTile);
             //inventory.digAmmount--;
             if (!time.isPaused)
             {
@@ -80,8 +79,8 @@ namespace RiverFlow.Core
         {
             River newRiver = Instantiate(riverPrefab, Vector3.zero, Quaternion.identity, transform);
             newRiver.Initialised(startTile, endTile);
+            newRiver.LinkToGrid();
             allRiver.Add(newRiver);
-
         }
 
         private void OnEnable()
