@@ -37,7 +37,7 @@ namespace RiverFlow.Core
                             Link0To0(startTile, endTile);
                             break;
                         case 1: //extending the end canal
-                            //Link1To0(endTile, startTile);
+                            Link0To1(startTile, endTile);
                             break;
                         default: //x >= 2
                             //Link2To0(endTile, startTile);
@@ -47,8 +47,8 @@ namespace RiverFlow.Core
                 case 1:
                     switch (level.tileGrid[endTile].LinkAmount)
                     {
-                        case 0: //in a void
-                            //Link1To0(startTile, endTile);
+                        case 0: //extending the end canal
+                            Link1To0(startTile, endTile);
                             break;
                         case 1: //extending the end canal
                             //Link1To1(startTile, endTile);
@@ -78,9 +78,25 @@ namespace RiverFlow.Core
         private void Link0To0(Vector2Int startTile, Vector2Int endTile)
         {
             River newRiver = Instantiate(riverPrefab, Vector3.zero, Quaternion.identity, transform);
-            newRiver.Initialised(startTile, endTile);
+            newRiver.Initialise(startTile, endTile);
             newRiver.LinkToGrid();
             allRiver.Add(newRiver);
+        }
+
+        private void Link0To1(Vector2Int startTile, Vector2Int endTile) => Link1To0(endTile, startTile);
+        private void Link1To0(Vector2Int startTile, Vector2Int endTile)
+        {
+            River river = level.tileGrid[startTile].rivers[0];
+
+            //Made sure startTile is the endTile
+            if (river.startNode == startTile)
+            {
+                river.Reverse();
+            }
+            //Extend river 
+            river.UnlinkToGrid();
+            river.Extend(river.tiles, endTile);
+            river.LinkToGrid();
         }
 
         private void OnEnable()

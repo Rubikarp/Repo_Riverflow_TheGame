@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using System.Linq;
 using System.Collections.Generic;
 using NaughtyAttributes;
+using System;
 
 namespace RiverFlow.Core
 {
@@ -37,13 +38,17 @@ namespace RiverFlow.Core
             riverMesh = GetComponent<RiverMesh>();
             riverMesh.SetPoints(RiverExtension.River2Point(riverTiles));
         }
-        public void Initialised(Vector2Int startNode, Vector2Int endNode) => Initialised(new List<Vector2Int>() { startNode, endNode });
-        public void Initialised(List<Vector2Int> tiles)
+        public void Initialise(Vector2Int startNode, Vector2Int endNode) => Initialise(new List<Vector2Int>() { startNode, endNode });
+        public void Initialise(List<Vector2Int> tiles)
         {
             riverTiles = tiles;
             riverMesh = GetComponent<RiverMesh>();
             riverMesh.SetPoints(RiverExtension.River2Point(riverTiles));
         }
+
+        public void Extend(List<Vector2Int> tiles, Vector2Int addedTile) => Initialise(tiles.Append(addedTile).ToList());
+        public void Extend(List<Vector2Int> tiles, List<Vector2Int> addedTiles) => Initialise(tiles.Union(addedTiles).ToList());
+
 
     }
 }
