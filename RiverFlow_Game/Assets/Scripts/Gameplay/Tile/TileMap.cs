@@ -7,7 +7,7 @@ using RiverFlow.LD;
 namespace RiverFlow.Core
 {
     //[System.Serializable]
-    public class TileMap : MonoBehaviour
+    public class TileMap : SingletonMonoBehaviour<TileMap>
     {
         static readonly Vector2Int[] lookPosDist1 = new Vector2Int[] {
             new Vector2Int(0, 1),
@@ -41,6 +41,8 @@ namespace RiverFlow.Core
         [Header("Info")]
         [SerializeField, ReadOnly] private Vector2Int size;
         public Vector2Int Size { get => size; }
+        public int GetLinkAmount(Vector2Int pos) => riverIn[GridPos2ID(pos)].Count + riverOut[GridPos2ID(pos)].Count;
+        
 
         [Header("State")]
         [HideInInspector] public Topology[] topology;
@@ -88,13 +90,15 @@ namespace RiverFlow.Core
             lookedTile.rivers = rivers[id];
         }
 
-        private int GridPos2ID(int x, int y) => x + y * (size.x - 1);
-        private int GridPos2ID(Vector2Int pos) => pos.x + pos.y * (size.x - 1);
+        public int GridPos2ID(int x, int y) => x + y * (size.x - 1);
+        public int GridPos2ID(Vector2Int pos) => pos.x + pos.y * (size.x - 1);
 
         public TileMap()
         {
             Initialize(new Vector2Int(64, 32));
         }
+        [Button]
+        public void Initialize() =>Initialize(size);
         public void Initialize(Vector2Int size)
         {
             this.size = size;
@@ -114,26 +118,17 @@ namespace RiverFlow.Core
             rivers = new List<River>[size.x * size.y];
             riverIn = new List<Vector2Int>[size.x * size.y];
             riverOut = new List<Vector2Int>[size.x * size.y];
+            for (int i = 0; i < riverIn.Length; i++)
+            {
+                rivers[i] = new List<River>(3);
+                riverIn[i] = new List<Vector2Int>(2);
+                riverOut[i] = new List<Vector2Int>(2);
+            }
         }
         public void LoadMap(MapData map)
         {
-            this.size = map.size;
+            Initialize(map.size);
             topology = map.topology;
-
-            currentFlow = new FlowStrenght[size.x * size.y];
-            previousFlow = new FlowStrenght[size.x * size.y];
-
-            irrigation = new FlowStrenght[size.x * size.y];
-
-            extraFlow = new FlowStrenght[size.x * size.y];
-            extraIrrig = new FlowStrenght[size.x * size.y];
-
-            plant = new Plant[size.x * size.y];
-            element = new Element[size.x * size.y];
-
-            rivers = new List<River>[size.x * size.y];
-            riverIn = new List<Vector2Int>[size.x * size.y];
-            riverOut = new List<Vector2Int>[size.x * size.y];
         }
 
         [Button]
@@ -163,7 +158,7 @@ namespace RiverFlow.Core
                     for (int i = 0; i < riverIn[id].Count; i++)
                     {
                         lookPos = gridPos + riverIn[id][i];
-                        if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
+                        if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x > size.x || lookPos.y > size.y) continue;
                         flow += (int)previousFlow[GridPos2ID(lookPos)];
                     }
                     flow += (int)extraFlow[id];
@@ -174,6 +169,7 @@ namespace RiverFlow.Core
         public void ComputeIrig()
         {
             Vector2Int gridPos;
+            Vector2Int lookPos;
             FlowStrenght flow;
             int id;
 
@@ -184,10 +180,11 @@ namespace RiverFlow.Core
                     flow = irrigation[id];
                     gridPos = new Vector2Int(x, y);
 
-                    foreach (var lookPos in lookPosDist1)
+                    foreach (var offset in lookPosDist1)
                     {
+                        lookPos = gridPos + offset;
                         if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
-                        flow = (FlowStrenght)Mathf.Max((int)flow, (int)currentFlow[GridPos2ID(gridPos + lookPos)]);
+                        flow = (FlowStrenght)Mathf.Max((int)flow, (int)currentFlow[GridPos2ID(lookPos)]);
                     }
                     flow += (int)extraIrrig[id];
 

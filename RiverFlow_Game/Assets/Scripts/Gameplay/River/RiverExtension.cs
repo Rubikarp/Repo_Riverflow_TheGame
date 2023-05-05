@@ -7,16 +7,25 @@ namespace RiverFlow.Core
 {
     public static class RiverExtension
     {
-        private static LevelHandler _level;
-        public static LevelHandler level
+        private static TileMap _map;
+        private static WorldGrid _grid;
+        private static RiverPalette _riverPalette;
+        public static TileMap map
         {
             get
             {
-                if (_level is null) _level = LevelHandler.Instance;
-                return _level;
+                if (_map is null) _map = TileMap.Instance;
+                return _map;
             }
         }
-        private static RiverPalette _riverPalette;
+        public static WorldGrid grid
+        {
+            get
+            {
+                if (_grid is null) _grid = WorldGrid.Instance;
+                return _grid;
+            }
+        }
         public static RiverPalette riverPalette
         {
             get
@@ -31,14 +40,17 @@ namespace RiverFlow.Core
             var result = new List<RiverPoint>();
             //result = tilesGridPos.Select(gridPos => new RiverPoint(level.grid.TileToPos(gridPos), level.tileGrid[gridPos].irrigation))
 
+            var a = riverPalette.FromIrrigation(map.currentFlow[map.GridPos2ID(1,1)]);
             result = tilesGridPos.Select(
                 gridPos => new RiverPoint(
-                    level.grid.TileToPos(gridPos),
-                    riverPalette.FromIrrigation(level.tileGrid[gridPos].currentFlow))
-                ).ToList();
+                    grid.TileToPos(gridPos),
+                    riverPalette.FromIrrigation(map.currentFlow[map.GridPos2ID(gridPos)]),
+                    map.element[map.GridPos2ID(gridPos)] is Lake ? 1 :0
+                )).ToList();
 
             return result;
         }
+
         public static void LinkToGrid(this River river)
         {
             if (river.Lenght < 2)
@@ -47,16 +59,21 @@ namespace RiverFlow.Core
                 return;
             }
 
-            level.tileGrid[river.tiles[0]].rivers.Add(river);
-            level.tileGrid[river.tiles[0]].riverOut.Add(river.tiles[1] - river.tiles[0]);
-            for (int i = 1; i < river.tiles.Count-1; i++)
+            int id = _map.GridPos2ID(river.tiles[0]);
+            _map.rivers[id].Add(river);
+            _map.riverOut[id].Add(river.tiles[1] - river.tiles[0]);
+
+            for (int i = 1; i < river.tiles.Count - 1; i++)
             {
-                level.tileGrid[river.tiles[i]].rivers.Add(river);
-                level.tileGrid[river.tiles[i]].riverIn.Add(river.tiles[i - 1] - river.tiles[i]);
-                level.tileGrid[river.tiles[i]].riverOut.Add(river.tiles[i + 1] - river.tiles[i]);
+                id = _map.GridPos2ID(river.tiles[i]);
+                _map.rivers[id].Add(river);
+                _map.riverIn[id].Add(river.tiles[i - 1] - river.tiles[i]);
+                _map.riverOut[id].Add(river.tiles[i + 1] - river.tiles[i]);
             }
-            level.tileGrid[river.tiles.Last()].rivers.Add(river);
-            level.tileGrid[river.tiles.Last()].riverIn.Add(river.tiles.FromEnd(1) - river.tiles.Last());
+
+            id = _map.GridPos2ID(river.tiles.Last());
+            _map.rivers[id].Add(river);
+            _map.riverIn[id].Add(river.tiles.FromEnd(1) - river.tiles.Last());
         }
         public static void UnlinkToGrid(this River river)
         {
@@ -66,16 +83,47 @@ namespace RiverFlow.Core
                 return;
             }
 
-            level.tileGrid[river.tiles[0]].rivers.Remove(river);
-            level.tileGrid[river.tiles[0]].riverOut.Remove(river.tiles[1] - river.tiles[0]);
+            int id = _map.GridPos2ID(river.tiles[0]);
+            _map.rivers[id].Remove(river);
+            _map.riverOut[id].Remove(river.tiles[1] - river.tiles[0]);
+
             for (int i = 1; i < river.tiles.Count - 1; i++)
             {
-                level.tileGrid[river.tiles[i]].rivers.Remove(river);
-                level.tileGrid[river.tiles[i]].riverIn.Remove(river.tiles[i - 1] - river.tiles[i]);
-                level.tileGrid[river.tiles[i]].riverOut.Remove(river.tiles[i + 1] - river.tiles[i]);
+                id = _map.GridPos2ID(river.tiles[i]);
+                _map.rivers[id].Remove(river);
+                _map.riverIn[id].Remove(river.tiles[i - 1] - river.tiles[i]);
+                _map.riverOut[id].Remove(river.tiles[i + 1] - river.tiles[i]);
             }
-            level.tileGrid[river.tiles.Last()].rivers.Remove(river);
-            level.tileGrid[river.tiles.Last()].riverIn.Remove(river.tiles.FromEnd(1) - river.tiles.Last());
+
+            id = _map.GridPos2ID(river.tiles.Last());
+            _map.rivers[id].Remove(river);
+            _map.riverIn[id].Remove(river.tiles.FromEnd(1) - river.tiles.Last());
         }
+
+        public static void Reverse(this River river)
+        {
+            river.UnlinkToGrid();
+            river.tiles.Reverse();
+            river.LinkToGrid();
+        }
+        public static void Extend(this River river, Vector2Int newPos)
+        {
+            if (river.startNode != newPos || river.endNode != newPos)
+            {
+                Debug.LogError("Error : try to extend but not from an extremum", river);
+                return;
+            }
+            //Made sure startTile is the endTile
+            if (river.startNode != newPos)
+            {
+                river.Reverse();
+            }
+            //Extend river 
+            river.UnlinkToGrid();
+            river.Extend(river.tiles, newPos);
+            river.LinkToGrid();
+        }
+
+
     }
 }

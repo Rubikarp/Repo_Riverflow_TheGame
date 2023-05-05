@@ -82,13 +82,11 @@ namespace RiverFlow.LD
             //Fill Option
             if (GUILayout.Button("Fill grid by selected Brush", EditorStyles.miniButton))
             {
-                for (int y = 0; y < currentLD.Size.y; y++)
-                {
-                    for (int x = 0; x < currentLD.Size.x; x++)
+                for (int x = 0; x < currentLD.Size.x; x++)
+                    for (int y = 0; y < currentLD.Size.y; y++)
                     {
-                        topoTypeProp.GetArrayElementAtIndex(y * currentLD.Size.x + x).enumValueIndex = selectedTileType.enumValueIndex;
+                        topoTypeProp.GetArrayElementAtIndex(x + y * currentLD.Size.x).enumValueIndex = selectedTileType.enumValueIndex;
                     }
-                }
             }
             //edit Brush
             using (new GUILayout.HorizontalScope())
@@ -162,7 +160,7 @@ namespace RiverFlow.LD
                         curX += spaceWidth;
                         Rect rect = new Rect(curX, curY, cellWidth, cellWidth);
                         curX += cellWidth;
-                        int tileIndex = y * currentLD.Size.x + x;
+                        int tileIndex = x + ((currentLD.Size.y - 1 - y) * (currentLD.Size.x - 1));
 
                         //Utilisateur peint
                         if (nextRect.y != 0)
@@ -171,14 +169,14 @@ namespace RiverFlow.LD
                             {
                                 if (isClicking)
                                 {
-                                    int clikedIndex = y * currentLD.Size.x + x;
+                                    int clikedIndex = x + y * currentLD.Size.x;
                                     for (int xx = -Mathf.FloorToInt((float)brushSize / 2f); xx < Mathf.CeilToInt((float)brushSize / 2f); xx++)
                                     {
                                         for (int yy = -Mathf.FloorToInt((float)brushSize / 2f); yy < Mathf.CeilToInt((float)brushSize / 2f); yy++)
                                         {
-                                            if ( y + yy < 0 || sizeProp.vector2IntValue.y <= y + yy) continue;
-                                            if ( x + xx < 0 || sizeProp.vector2IntValue.x <= x + xx) continue;
-                                            clikedIndex = (y + yy) * currentLD.Size.x + (x + xx);
+                                            if (y + yy < 0 || sizeProp.vector2IntValue.y <= y + yy) continue;
+                                            if (x + xx < 0 || sizeProp.vector2IntValue.x <= x + xx) continue;
+                                            clikedIndex = (x + xx) + (y + yy) * currentLD.Size.x;
                                             topoTypeProp.GetArrayElementAtIndex(clikedIndex).enumValueIndex = selectedTileType.enumValueIndex;
                                         }
                                     }

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: TileTopologyPalette
   m_EditorClassIdentifier: 
   holedGround: {r: 0.5764706, g: 0.5137255, b: 0.3921569, a: 1}
-  grass: {r: 0.6156863, g: 0.83921576, b: 0.5647059, a: 1}
-  clay: {r: 0.93725497, g: 0.6784314, b: 0.5058824, a: 1}
-  aride: {r: 0.96470594, g: 0.8745099, b: 0.6431373, a: 1}
-  mountain: {r: 0.5921569, g: 0.6039216, b: 0.56078434, a: 1}
+  grass: {r: 0.18571424, g: 1, b: 0, a: 1}
+  clay: {r: 1, g: 0.40000004, b: 0, a: 1}
+  aride: {r: 1, g: 0.9451673, b: 0, a: 1}
+  mountain: {r: 0.14150941, g: 0.14150941, b: 0.14150941, a: 1}
   errorMat: {r: 1, g: 0, b: 1, a: 1}

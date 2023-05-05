@@ -20,7 +20,7 @@ namespace RiverFlow.LD
         // Define an indexer (https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/indexers/?redirectedfrom=MSDN)
         public Topology[] topology = new Topology[8 * 8];
         public Topology this[Vector2Int pos] { get { return this[pos.x, pos.y]; } }
-        public Topology this[int x, int y] { get { return topology[x + (size.y - 1 - y) * size.x]; } }
+        public Topology this[int x, int y] { get { return topology[x + (y * (size.x-1))]; } }
 
 
         [Button]
@@ -29,8 +29,8 @@ namespace RiverFlow.LD
         public Texture2D GenerateMapTexture()
         {
             Texture2D mapTexture = TextureGenerator.Generate(size, true);
-            for (int y = 0; y < size.y; y++)
-                for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < size.x; x++)
+                for (int y = 0; y < size.y; y++)
                     switch (this[x, y])
                     {
                         case Topology.Grass:
@@ -60,28 +60,27 @@ namespace RiverFlow.LD
         public void LoadMapTexture(Texture2D texture)
         {
             size = new Vector2Int(texture.width, texture.height);
-            topology = new Topology[size.x * size.y];
+            topology = new Topology[(size.x) * (size.y + 1)];
 
             Color readPixel;
-            for (int y = 0; y < size.y; y++)
-            {
-                for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < size.x; x++)
+                for (int y = 0; y < size.y; y++)
                 {
                     readPixel = texture.GetPixel(x, y).linear;
                     Debug.Log(readPixel);
 
                     if (readPixel.a < .1)
-                        topology[x + ((size.y - 1 - y) * size.x)] = Topology.Mountain;
+                        topology[x + (y * (size.x - 1))] = Topology.Mountain;
                     else if (readPixel.r > .8)
-                        topology[x + ((size.y - 1 - y) * size.x)] = Topology.Sand;
+                        topology[x + (y * (size.x - 1))] = Topology.Sand;
                     else if (readPixel.g > .8)
-                        topology[x + ((size.y - 1 - y) * size.x)] = Topology.Grass;
+                        topology[x + (y * (size.x - 1))] = Topology.Grass;
                     else if (readPixel.b > .8)
-                        topology[x + ((size.y - 1 - y) * size.x)] = Topology.Clay;
+                        topology[x + (y * (size.x - 1))] = Topology.Clay;
                     else
-                        topology[x + ((size.y - 1 - y) * size.x)] = Topology.Mountain;
+                        topology[x + (y * (size.x - 1))] = Topology.Mountain;
                 }
-            }
+
         }
 
 #if UNITY_EDITOR

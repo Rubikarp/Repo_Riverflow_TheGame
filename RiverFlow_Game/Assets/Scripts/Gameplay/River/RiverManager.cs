@@ -8,7 +8,7 @@ namespace RiverFlow.Core
 {
     public class RiverManager : MonoBehaviour
     {
-        [SerializeField, Required] LevelHandler level;
+        [SerializeField, Required] TileMap map;
         [SerializeField, Required] TimeManager time;
         [SerializeField, Required] LinkHandler link;
 
@@ -28,10 +28,10 @@ namespace RiverFlow.Core
         
         private void LinkConfirmed(Vector2Int startTile, Vector2Int endTile)
         {
-            switch (level.tileGrid[startTile].LinkAmount)
+            switch (map.GetLinkAmount(startTile))
             {
                 case 0:
-                    switch (level.tileGrid[endTile].LinkAmount)
+                    switch (map.GetLinkAmount(endTile))
                     {
                         case 0: //in a void
                             Link0To0(startTile, endTile);
@@ -45,13 +45,13 @@ namespace RiverFlow.Core
                     }
                     break;
                 case 1:
-                    switch (level.tileGrid[endTile].LinkAmount)
+                    switch (map.GetLinkAmount(endTile))
                     {
                         case 0: //extending the end canal
                             Link1To0(startTile, endTile);
                             break;
                         case 1: //extending the end canal
-                            //Link1To1(startTile, endTile);
+                            Link1To1(startTile, endTile);
                             break;
                         default: //x >= 2
                             //Link2To1(endTile, startTile);
@@ -59,7 +59,7 @@ namespace RiverFlow.Core
                     }
                     break;
                 default: // 2 ou +
-                    switch (level.tileGrid[endTile].LinkAmount)
+                    switch (map.GetLinkAmount(endTile))
                     {
                         case 0: //in a void
                             //Link2To0(startTile, endTile);
@@ -86,17 +86,44 @@ namespace RiverFlow.Core
         private void Link0To1(Vector2Int startTile, Vector2Int endTile) => Link1To0(endTile, startTile);
         private void Link1To0(Vector2Int startTile, Vector2Int endTile)
         {
-            River river = level.tileGrid[startTile].rivers[0];
+            River river = map.rivers[map.GridPos2ID(startTile)][0];
+            river.Extend(endTile);
+        }
+        private void Link1To1(Vector2Int startTile, Vector2Int endTile)
+        {
+            River river1 = map.rivers[map.GridPos2ID(startTile)][0];
+            River river2 = map.rivers[map.GridPos2ID(endTile)][0];
+
+            if (river1.startNode != startTile || river1.endNode != startTile)
+            {
+                Debug.LogError("Error : try to merge but not from an extremum", river1);
+                return;
+            }
+            if (river2.startNode != startTile || river2.endNode != startTile)
+            {
+                Debug.LogError("Error : try to merge but not from an extremum", river2);
+                return;
+            }
 
             //Made sure startTile is the endTile
-            if (river.startNode == startTile)
+            if (river1.endNode != startTile || river2.startNode != endTile)
             {
-                river.Reverse();
+                if(river1.endNode != startTile)
+                {
+                    //Merge river1 into 2
+                }
+                else
+                {
+                    //Merge river2 into 1
+                }
             }
-            //Extend river 
-            river.UnlinkToGrid();
-            river.Extend(river.tiles, endTile);
-            river.LinkToGrid();
+            else
+            {
+                river1.Reverse();
+                //Merge river1 into 2
+
+            }
+
         }
 
         private void OnEnable()
