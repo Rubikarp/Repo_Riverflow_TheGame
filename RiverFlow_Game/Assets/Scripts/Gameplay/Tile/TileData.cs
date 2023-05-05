@@ -28,7 +28,7 @@ namespace RiverFlow.Core
 
         public TileData(int x, int y)
         {
-            gridPos = new Vector2Int(x,y);
+            gridPos = new Vector2Int(x, y);
 
             plant = null;
             element = null;

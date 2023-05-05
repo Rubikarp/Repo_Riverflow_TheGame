@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using RiverFlow.LD;
 
 namespace RiverFlow.Core
 {
@@ -38,25 +39,102 @@ namespace RiverFlow.Core
         };
 
         [Header("Info")]
-        public Vector2Int size;
+        [SerializeField, ReadOnly] private Vector2Int size;
+        public Vector2Int Size { get => size; }
 
         [Header("State")]
-        public Topology[] topology;
+        [HideInInspector] public Topology[] topology;
 
         [Header("State")]
-        public FlowStrenght[] irrigation;
-        public FlowStrenght[] currentFlow;
-        public FlowStrenght[] previousFlow;
+        [HideInInspector] public FlowStrenght[] currentFlow;
+        [HideInInspector] private FlowStrenght[] previousFlow;
+        [Space(10)]
+        [HideInInspector] public FlowStrenght[] irrigation;
+        [Space(10)]
+        [HideInInspector] public FlowStrenght[] extraFlow;
+        [HideInInspector] public FlowStrenght[] extraIrrig;
 
-        [Header("State")]
-        public Plant[] plant;
-        public Element[] element;
-        public List<Vector2Int>[] riverIn;
-        public List<Vector2Int>[] riverOut;
-        public List<River>[] rivers;
+        [Header("Linked Element")]
+        [HideInInspector] public Plant[] plant;
+        [HideInInspector] public Element[] element;
+
+        [Header("River")]
+        [HideInInspector] public List<River>[] rivers;
+        [HideInInspector] public List<Vector2Int>[] riverIn;
+        [HideInInspector] public List<Vector2Int>[] riverOut;
+
+        [Header("Debug")]
+        [SerializeField] private Vector2Int lookPos;
+        [SerializeField, ReadOnly] private TileData lookedTile;
+        private void OnValidate()
+        {
+            lookPos = new Vector2Int(
+                Mathf.Clamp(lookPos.x, 0, size.x - 1),
+                Mathf.Clamp(lookPos.y, 0, size.y - 1));
+            UpdateDebugLookedTile();
+        }
+        [Button]
+        private void UpdateDebugLookedTile()
+        {
+            int id = GridPos2ID(lookPos);
+            lookedTile.gridPos = lookPos;
+            lookedTile.topology = topology[id];
+            lookedTile.irrigation = irrigation[id];
+            lookedTile.currentFlow = currentFlow[id];
+            lookedTile.plant = plant[id];
+            lookedTile.element = element[id];
+            lookedTile.riverIn = riverIn[id];
+            lookedTile.riverOut = riverOut[id];
+            lookedTile.rivers = rivers[id];
+        }
 
         private int GridPos2ID(int x, int y) => x + y * (size.x - 1);
         private int GridPos2ID(Vector2Int pos) => pos.x + pos.y * (size.x - 1);
+
+        public TileMap()
+        {
+            Initialize(new Vector2Int(64, 32));
+        }
+        public void Initialize(Vector2Int size)
+        {
+            this.size = size;
+            topology = new Topology[size.x * size.y];
+
+            currentFlow = new FlowStrenght[size.x * size.y];
+            previousFlow = new FlowStrenght[size.x * size.y];
+
+            irrigation = new FlowStrenght[size.x * size.y];
+
+            extraFlow = new FlowStrenght[size.x * size.y];
+            extraIrrig = new FlowStrenght[size.x * size.y];
+
+            plant = new Plant[size.x * size.y];
+            element = new Element[size.x * size.y];
+
+            rivers = new List<River>[size.x * size.y];
+            riverIn = new List<Vector2Int>[size.x * size.y];
+            riverOut = new List<Vector2Int>[size.x * size.y];
+        }
+        public void LoadMap(MapData map)
+        {
+            this.size = map.size;
+            topology = map.topology;
+
+            currentFlow = new FlowStrenght[size.x * size.y];
+            previousFlow = new FlowStrenght[size.x * size.y];
+
+            irrigation = new FlowStrenght[size.x * size.y];
+
+            extraFlow = new FlowStrenght[size.x * size.y];
+            extraIrrig = new FlowStrenght[size.x * size.y];
+
+            plant = new Plant[size.x * size.y];
+            element = new Element[size.x * size.y];
+
+            rivers = new List<River>[size.x * size.y];
+            riverIn = new List<Vector2Int>[size.x * size.y];
+            riverOut = new List<Vector2Int>[size.x * size.y];
+        }
 
         [Button]
         public void WaterStep()
@@ -88,11 +166,7 @@ namespace RiverFlow.Core
                         if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
                         flow += (int)previousFlow[GridPos2ID(lookPos)];
                     }
-
-                    if (element[id] != null)
-                    {
-                        flow += (int)element[id].irrigationLvl;
-                    }
+                    flow += (int)extraFlow[id];
 
                     currentFlow[id] = (FlowStrenght)Mathf.Clamp((int)flow, 0, 4);
                 }
@@ -107,28 +181,15 @@ namespace RiverFlow.Core
                 for (int y = 0; y < size.y; y++)
                 {
                     id = GridPos2ID(x, y);
-                    flow = FlowStrenght._00_;
+                    flow = irrigation[id];
                     gridPos = new Vector2Int(x, y);
 
-                    if (currentFlow[id] == FlowStrenght._100_)
-                    {
-                        irrigation[id] = FlowStrenght._100_;
-                        continue;
-                    }
-                    foreach (var lookPos in lookPosDist2)
-                    {
-                        if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
-                        if (element[id] is Lake)
-                        {
-                            irrigation[GridPos2ID(gridPos + lookPos)] = FlowStrenght._100_;
-                            continue;
-                        }
-                    }
                     foreach (var lookPos in lookPosDist1)
                     {
                         if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
-                        flow += (int)currentFlow[GridPos2ID(gridPos + lookPos)];
+                        flow = (FlowStrenght)Mathf.Max((int)flow, (int)currentFlow[GridPos2ID(gridPos + lookPos)]);
                     }
+                    flow += (int)extraIrrig[id];
 
                     irrigation[id] = (FlowStrenght)Mathf.Clamp((int)flow, 0, 4);
                 }

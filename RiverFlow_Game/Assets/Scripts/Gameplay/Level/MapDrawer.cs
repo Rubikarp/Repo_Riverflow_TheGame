@@ -4,7 +4,7 @@ using NaughtyAttributes;
 
 namespace RiverFlow.Core
 {
-    public class LevelDrawer : ShaderLink
+    public class MapDrawer : ShaderLink
     {
         [SerializeField] private WorldGrid grid;
         [SerializeField] private SpriteRenderer visual;

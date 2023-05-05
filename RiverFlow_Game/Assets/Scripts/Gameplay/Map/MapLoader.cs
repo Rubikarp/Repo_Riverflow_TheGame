@@ -10,8 +10,8 @@ namespace RiverFlow.Core
     {
         public MapData mapToLoad;
         [Space(10)]
-        public LevelHandler levelHandler;
-        public LevelDrawer levelDrawer;
+        public TileMap level;
+        public MapDrawer levelDrawer;
 
         private void Awake() => LoadMap();
 
@@ -20,7 +20,7 @@ namespace RiverFlow.Core
         {
             if (mapToLoad is null) return;
 
-            levelHandler.LoadMap(mapToLoad);
+            level.LoadMap(mapToLoad);
             levelDrawer.UpdateMapVisual(mapToLoad);
         }
     }

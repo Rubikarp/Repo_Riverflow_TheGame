@@ -65,7 +65,7 @@ namespace RiverFlow.Core
 
         private void Update()
         {
-            WaterStep();
+            //WaterStep();
         }
 
         [Button]
