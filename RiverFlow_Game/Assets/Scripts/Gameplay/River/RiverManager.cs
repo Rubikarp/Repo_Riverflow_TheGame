@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ namespace RiverFlow.Core
 {
     public class RiverManager : MonoBehaviour
     {
+        [SerializeField, Required] WorldGrid grid;
         [SerializeField, Required] TileMap map;
         [SerializeField, Required] TimeManager time;
         [SerializeField, Required] LinkHandler link;
@@ -15,6 +17,16 @@ namespace RiverFlow.Core
         [SerializeField, Required] River riverPrefab;
         [SerializeField] List<River> allRiver;
 
+        private void OnEnable()
+        {
+            link.onLink.AddListener(OnLink);
+            link.onBreak.AddListener(OnBreak);
+        }
+        private void OnDisable()
+        {
+            link.onLink.RemoveListener(OnLink);
+            link.onBreak.RemoveListener(OnBreak);
+        }
         private void FixedUpdate()
         {
             foreach (var river in allRiver)
@@ -32,7 +44,6 @@ namespace RiverFlow.Core
                 //map.WaterStep();
             }
         }
-
         private void LinkConfirmed(Vector2Int startTile, Vector2Int endTile)
         {
             switch (map.GetLinkAmount(startTile))
@@ -81,6 +92,99 @@ namespace RiverFlow.Core
                     break;
             }
         }
+        private void OnBreak(Vector2Int erasedTile)
+        {
+            int tileID = map.GridPos2ID(erasedTile);
+
+            if (map.element[tileID] != null && !(map.element[tileID] is Source) && map.plant[tileID] != null)
+            {
+                //ErasedElement(erasedTile);
+            }
+            else
+            {
+                //ErasedRiverInTile(erasedTile);
+            }
+            if (!time.isPaused)
+            {
+                //map.WaterStep();
+            }
+        }
+        private void ErasedRiverInTile(Vector2Int erasedTile)
+        {
+            //When erasing river not here but riverIn And RiverOut value is tile GridPos !!!
+
+            int linkCount = map.GetLinkAmount(erasedTile);
+            int erasedTileID = map.GridPos2ID(erasedTile);
+            //inventory.digAmmount += linkCount;
+
+            //TODO : Mountain check
+
+            List<River> tileRivers = map.rivers[erasedTileID];
+            List<Vector2Int> impactedTiles = map.riverIn[erasedTileID];
+            impactedTiles.AddRange(map.riverOut[erasedTileID]);
+            for (int i = 0; i < impactedTiles.Count; i++)
+            {
+                impactedTiles[i] += erasedTile;
+            }
+            impactedTiles = impactedTiles.Where(tile => map.GetLinkAmount(tile) >= 2).ToList();
+
+            //foreach (var river in tileRivers)
+            for (int i = 0; i < tileRivers.Count; i++)
+            {
+                if (erasedTile == tileRivers[i].startNode || erasedTile == tileRivers[i].endNode)
+                {
+                    tileRivers[i].Shorten(erasedTile);
+                }
+                else
+                {
+                    var river = tileRivers[i];
+                    var newRivers = tileRivers[i].Break(erasedTile);
+
+                    //Suppr old river
+                    allRiver.Remove(river);
+                    river.UnlinkToGrid();
+                    Destroy(river.gameObject);
+                    i--;
+
+                    //allRiver add
+                    if(newRivers.Item1.Count >= 2)
+                    {
+                        var addRiver = CreateRiver(newRivers.Item1);
+                        addRiver.LinkToGrid();
+                        allRiver.Add(addRiver);
+                    }
+                    if (newRivers.Item2.Count >= 2)
+                    {
+                        var addRiver = CreateRiver(newRivers.Item2);
+                        addRiver.LinkToGrid();
+                        allRiver.Add(addRiver);
+                    }
+                }
+            }
+
+            //TODO : Check impacted Tile
+            foreach (var impactedTile in impactedTiles)
+            {
+                if(map.rivers[map.GridPos2ID(impactedTile)].Count >= 2)
+                {
+                    River river1 = map.rivers[map.GridPos2ID(impactedTile)][0];
+                    River river2 = map.rivers[map.GridPos2ID(impactedTile)][1];
+
+                    if (impactedTile == river1.endNode && impactedTile == river2.startNode)
+                    {
+                        river1.Merge(river2);
+                        allRiver.Remove(river2);
+                        Destroy(river2.gameObject);
+                    }
+                    else if (impactedTile == river1.startNode && impactedTile == river2.endNode)
+                    {
+                        river2.Merge(river1);
+                        allRiver.Remove(river1);
+                        Destroy(river1.gameObject);
+                    }
+                }
+            }
+        }
 
         private River CreateRiver(Vector2Int startTile, Vector2Int endTile) => CreateRiver(new List<Vector2Int>(2) { startTile, endTile });
         private River CreateRiver(List<Vector2Int> tiles)
@@ -89,6 +193,8 @@ namespace RiverFlow.Core
             newRiver.Initialise(tiles);
             return newRiver;
         }
+
+        #region Link
         private void Link0To0(Vector2Int startTile, Vector2Int endTile)
         {
             var newRiver = CreateRiver(startTile, endTile);
@@ -106,6 +212,11 @@ namespace RiverFlow.Core
             River river1 = map.rivers[map.GridPos2ID(startTile)][0];
             River river2 = map.rivers[map.GridPos2ID(endTile)][0];
 
+            if (river1.CheckForLoop(endTile))
+            {
+                Debug.LogWarning(" LOOP ", river1);
+                return;
+            }
             if (river1 == river2)
             {
                 Debug.LogError("Error :link river to itself", river1);
@@ -206,6 +317,39 @@ namespace RiverFlow.Core
 
             if (map.rivers[map.GridPos2ID(startTile)].Count == 1)
             {
+                var river = map.rivers[map.GridPos2ID(startTile)][0];
+                if (river.CheckForLoop(endTile))
+                {
+                    Debug.LogWarning(" LOOP ", river);
+                    return;
+                }
+            }
+            else
+            {
+                var rivers = map.rivers[map.GridPos2ID(startTile)];//.Where(riv => riv.endNode == startTile);
+                foreach (var riv in rivers)
+                {
+                    if (riv.CheckForLoop(endTile))
+                    {
+                        Debug.LogWarning(" LOOP ", riv);
+                        return;
+                    }
+                }
+            }
+            var riverLinked = map.rivers[map.GridPos2ID(endTile)][0];
+            if (map.rivers[map.GridPos2ID(startTile)].Contains(riverLinked))
+            {
+                Debug.LogError("Error :link river to itself", riverLinked);
+                return;
+            }
+            if (riverLinked.CheckForLoop(startTile))
+            {
+                Debug.LogWarning(" LOOP ", riverLinked);
+                return;
+            }
+
+            if (map.rivers[map.GridPos2ID(startTile)].Count == 1)
+            {
                 River river = map.rivers[map.GridPos2ID(startTile)][0];
                 var newRivers = river.Split(startTile);
 
@@ -239,6 +383,17 @@ namespace RiverFlow.Core
                 //CannotLink(MessageCase.NotInCanal);
                 return;
             }
+
+            var rivers = map.rivers[map.GridPos2ID(startTile)];//.Where(riv => riv.endNode == startTile);
+            foreach (var riv in rivers)
+            {
+                if (riv.CheckForLoop(endTile))
+                {
+                    Debug.LogWarning(" LOOP ", riv);
+                    return;
+                }
+            }
+
 
             if (map.rivers[map.GridPos2ID(startTile)].Count == 1)
             {
@@ -282,13 +437,17 @@ namespace RiverFlow.Core
             //Extend Branch
             Link0To0(startTile, endTile);
         }
-        private void OnEnable()
+        #endregion Link
+
+        private void OnDrawGizmos()
         {
-            link.onLink.AddListener(OnLink);
-        }
-        private void OnDisable()
-        {
-            link.onLink.RemoveListener(OnLink);
+            foreach (var rivers in RiverExtension.linkedRiver)
+            {
+                for (int i = 0; i < rivers.tiles.Count - 1; i++)
+                {
+                    Debug.DrawLine(grid.TileToPos(rivers.tiles[i]), grid.TileToPos(rivers.tiles[i + 1]), Color.red);
+                }
+            }
         }
     }
 }

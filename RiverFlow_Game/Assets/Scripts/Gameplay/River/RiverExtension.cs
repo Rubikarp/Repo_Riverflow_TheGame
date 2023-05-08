@@ -34,6 +34,7 @@ namespace RiverFlow.Core
                 return _riverPalette;
             }
         }
+        public static List<River> linkedRiver = new List<River>();
 
         public static List<RiverPoint> River2Point(List<Vector2Int> tilesGridPos)
         {
@@ -138,6 +139,23 @@ namespace RiverFlow.Core
                 river.LinkToGrid();
             }
         }
+        public static void Shorten(this River river, Vector2Int eradesTile)
+        {
+            if (eradesTile != river.endNode && eradesTile != river.startNode)
+            {
+                Debug.LogError("Error : try to extend but not from an extremum", river);
+                return;
+            }
+
+            //Extend river 
+            river.UnlinkToGrid();
+
+            var tile = river.tiles;
+            tile.Remove(eradesTile);
+            river.Initialise(tile);
+
+            river.LinkToGrid();
+        }
         public static void Merge(this River riverIn, River riverSup)
         {
             if (riverIn.endNode != riverSup.startNode)
@@ -148,7 +166,9 @@ namespace RiverFlow.Core
             //Extend river 
             riverIn.UnlinkToGrid();
             riverSup.UnlinkToGrid();
-            riverIn.AddTiles(riverIn.tiles, riverSup.tiles);
+            var tiles = riverIn.tiles.Union(riverSup.tiles).ToList();
+            tiles.Distinct();
+            riverIn.Initialise(tiles);
             riverIn.LinkToGrid();
         }
         public static (List<Vector2Int>, List<Vector2Int>) Split(this River river, Vector2Int splitPos)
@@ -163,6 +183,62 @@ namespace RiverFlow.Core
             var riverTileA = river.tiles.GetRange(0, index + 1);
             var riverTileB = river.tiles.GetRange(index, river.tiles.Count - index);
             return (riverTileA, riverTileB);
+        }
+        public static (List<Vector2Int>, List<Vector2Int>) Break(this River river, Vector2Int breakPos)
+        {
+            if (breakPos == river.startNode || breakPos == river.endNode)
+            {
+                Debug.LogError("Error : try to break a river extremum", river);
+                return (null, null);
+            }
+
+            int index = river.tiles.IndexOf(breakPos);
+            var riverTileA = river.tiles.GetRange(0, index);
+            var riverTileB = river.tiles.GetRange(index + 1, river.tiles.Count - index - 1);
+            return (riverTileA, riverTileB);
+        }
+
+        public static bool CheckForLoop(this River river, Vector2Int linkTile)
+        {
+            linkedRiver.Clear();
+
+            int linkTileID = map.GridPos2ID(linkTile);
+
+            var discoveredRiver = map.rivers[linkTileID];//.Where(riv => riv.endNode == linkTile);
+            foreach (var riv in discoveredRiver)
+            {
+                linkedRiver.AddRange(riv.GetParentRiver());
+            }
+
+            return linkedRiver.Contains(river);
+        }
+        public static List<River> GetParentRiver(this River computedRiver, List<River> alreadyCalc = null)
+        {
+            List<River> result = new List<River>();
+            if (alreadyCalc == null)
+            {
+                alreadyCalc = new List<River>();
+            }
+
+            alreadyCalc.Add(computedRiver);
+
+            Vector2Int startTile = computedRiver.startNode;
+            int startTileID = map.GridPos2ID(startTile);
+
+            //Select river i don't already check
+            var discoveredRiver = map.rivers[startTileID].Where(river => !alreadyCalc.Contains(river)).ToList();
+            //Select river giving me water 
+            discoveredRiver = discoveredRiver.Where(river => river.endNode == startTile).ToList();
+
+            if (discoveredRiver.Count <= 0) return result;
+            result.AddRange(discoveredRiver);
+
+            foreach (var river in discoveredRiver)
+            {
+                result.AddRange(river.GetParentRiver(alreadyCalc));
+            }
+
+            return result;
         }
     }
 }

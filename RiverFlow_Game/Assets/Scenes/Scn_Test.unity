@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffadcce34515aea4d8f9bc3178241ceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 1347921097}
   map: {fileID: 153147745}
   time: {fileID: 875391478}
   link: {fileID: 1838024075}
@@ -5172,7 +5173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileMap: {fileID: 153147745}
-  value: 0
+  value: 1
 --- !u!1 &1346450597
 GameObject:
   m_ObjectHideFlags: 0
