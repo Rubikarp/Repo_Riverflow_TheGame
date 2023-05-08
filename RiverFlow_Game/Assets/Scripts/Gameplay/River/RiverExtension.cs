@@ -40,12 +40,12 @@ namespace RiverFlow.Core
             var result = new List<RiverPoint>();
             //result = tilesGridPos.Select(gridPos => new RiverPoint(level.grid.TileToPos(gridPos), level.tileGrid[gridPos].irrigation))
 
-            var a = riverPalette.FromIrrigation(map.currentFlow[map.GridPos2ID(1,1)]);
+            var a = riverPalette.FromIrrigation(map.currentFlow[map.GridPos2ID(1, 1)]);
             result = tilesGridPos.Select(
                 gridPos => new RiverPoint(
                     grid.TileToPos(gridPos),
                     riverPalette.FromIrrigation(map.currentFlow[map.GridPos2ID(gridPos)]),
-                    map.element[map.GridPos2ID(gridPos)] is Lake ? 1 :0
+                    map.element[map.GridPos2ID(gridPos)] is Lake ? 1 : 0
                 )).ToList();
 
             return result;
@@ -106,24 +106,63 @@ namespace RiverFlow.Core
             river.tiles.Reverse();
             river.LinkToGrid();
         }
-        public static void Extend(this River river, Vector2Int newPos)
+        public static void Extend(this River river, Vector2Int fromPos, Vector2Int toPos)
         {
-            if (river.startNode != newPos || river.endNode != newPos)
+            if (fromPos != river.endNode
+             && fromPos != river.startNode)
             {
                 Debug.LogError("Error : try to extend but not from an extremum", river);
                 return;
             }
             //Made sure startTile is the endTile
-            if (river.startNode != newPos)
+            if (river.endNode != fromPos)
             {
-                river.Reverse();
+                //Extend river 
+                river.UnlinkToGrid();
+
+                var tile = new List<Vector2Int>() { toPos };
+                tile.AddRange(river.tiles);
+                river.Initialise(tile);
+
+                river.LinkToGrid();
+            }
+            else
+            {
+                //Extend river 
+                river.UnlinkToGrid();
+
+                var tile = river.tiles;
+                tile.Add(toPos);
+                river.Initialise(tile);
+
+                river.LinkToGrid();
+            }
+        }
+        public static void Merge(this River riverIn, River riverSup)
+        {
+            if (riverIn.endNode != riverSup.startNode)
+            {
+                Debug.LogError("Error : try to extend but not valide", riverIn);
+                return;
             }
             //Extend river 
-            river.UnlinkToGrid();
-            river.Extend(river.tiles, newPos);
-            river.LinkToGrid();
+            riverIn.UnlinkToGrid();
+            riverSup.UnlinkToGrid();
+            riverIn.AddTiles(riverIn.tiles, riverSup.tiles);
+            riverIn.LinkToGrid();
         }
+        public static (List<Vector2Int>, List<Vector2Int>) Split(this River river, Vector2Int splitPos)
+        {
+            if (splitPos == river.startNode || splitPos == river.endNode)
+            {
+                Debug.LogError("Error : try to split a river extremum", river);
+                return (null, null);
+            }
 
-
+            int index = river.tiles.IndexOf(splitPos);
+            var riverTileA = river.tiles.GetRange(0, index + 1);
+            var riverTileB = river.tiles.GetRange(index, river.tiles.Count - index);
+            return (riverTileA, riverTileB);
+        }
     }
 }

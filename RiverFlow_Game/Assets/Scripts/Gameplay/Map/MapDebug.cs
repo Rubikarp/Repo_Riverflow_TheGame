@@ -12,7 +12,7 @@ using UnityEditor;
 
 namespace RiverFlow.Core
 {
-    public class LevelHandler : SingletonMonoBehaviour<LevelHandler>
+    public class MapDebug : MonoBehaviour
     {
         [SerializeField] TopologyPalette topologyPalette;
         [SerializeField] RiverPalette riverPalette;
@@ -20,14 +20,8 @@ namespace RiverFlow.Core
         [SerializeField] bool showIrrigation;
 
         [Header("Component")]
-        public WorldGrid grid;
-        public TileMap tileMap;
-
-
-        private void Update()
-        {
-            tileMap.WaterStep();
-        }
+        [SerializeField] WorldGrid grid;
+        [SerializeField] TileMap tileMap;
 
 
 #if UNITY_EDITOR

@@ -25,10 +25,13 @@ namespace RiverFlow.Core
 
 
         [Button]
-        public void ReInitialised()
+        public void Refresh()
         {
-            Tiles = tiles;
-            riverMesh = GetComponent<RiverMesh>();
+            riverMesh.RefreshPoints(RiverExtension.River2Point(Tiles));
+        }
+        [Button]
+        public void ReDraw()
+        {
             riverMesh.SetPoints(RiverExtension.River2Point(Tiles));
         }
         public void Initialise(Vector2Int startNode, Vector2Int endNode) => Initialise(new List<Vector2Int>() { startNode, endNode });
@@ -39,8 +42,8 @@ namespace RiverFlow.Core
             riverMesh.SetPoints(RiverExtension.River2Point(Tiles));
         }
 
-        public void Extend(List<Vector2Int> tiles, Vector2Int addedTile) => Initialise(tiles.Append(addedTile).ToList());
-        public void Extend(List<Vector2Int> tiles, List<Vector2Int> addedTiles) => Initialise(tiles.Union(addedTiles).ToList());
+        public void AddTiles(List<Vector2Int> tiles, Vector2Int addedTile) => Initialise(tiles.Append(addedTile).ToList());
+        public void AddTiles(List<Vector2Int> tiles, List<Vector2Int> addedTiles) => Initialise(tiles.Union(addedTiles).ToList());
 
 
     }

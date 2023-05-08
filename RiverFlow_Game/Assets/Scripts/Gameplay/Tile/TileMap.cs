@@ -41,8 +41,7 @@ namespace RiverFlow.Core
         [Header("Info")]
         [SerializeField, ReadOnly] private Vector2Int size;
         public Vector2Int Size { get => size; }
-        public int GetLinkAmount(Vector2Int pos) => riverIn[GridPos2ID(pos)].Count + riverOut[GridPos2ID(pos)].Count;
-        
+
 
         [Header("State")]
         [HideInInspector] public Topology[] topology;
@@ -64,6 +63,7 @@ namespace RiverFlow.Core
         [HideInInspector] public List<River>[] rivers;
         [HideInInspector] public List<Vector2Int>[] riverIn;
         [HideInInspector] public List<Vector2Int>[] riverOut;
+        public int GetLinkAmount(Vector2Int pos) => riverIn[GridPos2ID(pos)].Count + riverOut[GridPos2ID(pos)].Count;
 
         [Header("Debug")]
         [SerializeField] private Vector2Int lookPos;
@@ -98,7 +98,7 @@ namespace RiverFlow.Core
             Initialize(new Vector2Int(64, 32));
         }
         [Button]
-        public void Initialize() =>Initialize(size);
+        public void Initialize() => Initialize(size);
         public void Initialize(Vector2Int size)
         {
             this.size = size;
@@ -134,8 +134,32 @@ namespace RiverFlow.Core
         [Button]
         public void WaterStep()
         {
+            CopyFlow();
             ComputeFlow();
             ComputeIrig();
+        }
+        public void CopyFlow()
+        {
+            //Record currentFlow
+            currentFlow.CopyTo(previousFlow,0);
+
+            //Amène des bugs / comportement bizarre
+            //previousFlow = currentFlow;
+
+            /*
+            Vector2Int gridPos;
+            Vector2Int lookPos;
+            FlowStrenght flow;
+            int id;
+
+            //Compute new Flow
+            for (int x = 0; x < size.x; x++)
+                for (int y = 0; y < size.y; y++)
+                {
+                    id = GridPos2ID(x, y);
+                    previousFlow[id] = currentFlow[id];
+                }
+            */
         }
         public void ComputeFlow()
         {
@@ -143,9 +167,6 @@ namespace RiverFlow.Core
             Vector2Int lookPos;
             FlowStrenght flow;
             int id;
-
-            //Record currentFlow
-            previousFlow = currentFlow;
 
             //Compute new Flow
             for (int x = 0; x < size.x; x++)
@@ -184,12 +205,23 @@ namespace RiverFlow.Core
                     {
                         lookPos = gridPos + offset;
                         if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
-                        flow = (FlowStrenght)Mathf.Max((int)flow, (int)currentFlow[GridPos2ID(lookPos)]);
+                        flow += (int)currentFlow[GridPos2ID(lookPos)];
                     }
                     flow += (int)extraIrrig[id];
 
                     irrigation[id] = (FlowStrenght)Mathf.Clamp((int)flow, 0, 4);
                 }
+        }
+
+        private float t;
+        private void Update()
+        {
+                WaterStep();
+            t += Time.deltaTime;
+            if (t > 0.2f)
+            {
+                t = 0f;
+            }
         }
     }
 }

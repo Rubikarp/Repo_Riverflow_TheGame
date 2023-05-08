@@ -17,7 +17,7 @@ namespace RiverFlow.Core
         public Vector2Int Size { get => size; }
         public Vector2 OffSet { get => offSet; }
 
-        [SerializeField] InteractionPlane interactPlane;
+        [SerializeField] InteractionPlane interactPlane;        
 
         public void SetLimit(Vector2Int size, Vector2 offSet = new Vector2())
         {

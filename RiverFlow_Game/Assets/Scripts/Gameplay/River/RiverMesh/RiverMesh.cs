@@ -62,6 +62,22 @@ namespace RiverFlow.Core
             this.points.Add(points.Last());
             UpdateMesh();
         }
+        public void RefreshPoints(List<RiverPoint> points)
+        {
+            float subDiv = 1.0f / (float)settings.subdividePerSegment;
+            this.points.Clear();
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                var prevPoint = points[i];
+                var nextPoint = points[i + 1];
+                for (int j = 0; j < settings.subdividePerSegment; j++)
+                {
+                    this.points.Add(RiverPoint.Lerp(prevPoint, nextPoint, j * subDiv));
+                }
+            }
+            this.points.Add(points.Last());
+            UpdateData();
+        }
 
         private void Awake()
         {

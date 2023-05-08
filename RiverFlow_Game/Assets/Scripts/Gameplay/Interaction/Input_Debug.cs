@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using RiverFlow.Core;
 
@@ -5,9 +6,14 @@ namespace RiverFlow.Gameplay.Interaction
 {
     public class Input_Debug : MonoBehaviour
     {
-        public LevelHandler map;
+        public TileMap tileMap;
+        public FlowStrenght value;
+
         public void onPress(InputMode mode, Vector3 pos)
         {
+            var tile = WorldGrid.Instance.PosToTile(pos);
+            tileMap.extraFlow[tileMap.GridPos2ID(tile)] = value;
+
         }
         public void onMaintain(InputMode mode, Vector3 pos)
         {
@@ -16,49 +22,18 @@ namespace RiverFlow.Gameplay.Interaction
             switch (mode)
             {
                 case InputMode.Dig:
-                    map.tileGrid.SetTopo(Topology.Clay, tile);
+                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
                     break;
                 case InputMode.Erase:
-                    map.tileGrid.SetTopo(Topology.Sand, tile);
+                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
                     break;
                 case InputMode.Cloud | InputMode.Lake | InputMode.Source:
-                    map.tileGrid.SetTopo(Topology.Mountain, tile);
+                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
                     break;
                 default:
-                    map.tileGrid.SetTopo(Topology.Grass, tile);
-                    break;
-            }*/
-            /*
-            switch (mode)
-            {
-                case InputMode.Dig:
-                    map.tileGrid.SetIrrigation(FlowStrenght._50_ , tile);
-                    break;
-                case InputMode.Erase:
-                    map.tileGrid.SetIrrigation(FlowStrenght._75_, tile);
-                    break;
-                case InputMode.Cloud | InputMode.Lake | InputMode.Source:
-                    map.tileGrid.SetIrrigation(FlowStrenght._100_, tile);
-                    break;
-                default:
-                    map.tileGrid.SetIrrigation(FlowStrenght._00_, tile);
+                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
                     break;
             }*/
         }
-
-        private Color ModeColor(InputMode mode)
-        {
-            switch (mode)
-            {
-                case InputMode.None: return Color.grey;
-                case InputMode.Dig: return Color.green;
-                case InputMode.Erase: return Color.red;
-                case InputMode.Cloud: return Color.cyan;
-                case InputMode.Lake: return Color.yellow;
-                case InputMode.Source: return Color.magenta;
-                default: return Color.black;
-            }
-        }
-
     }
 }

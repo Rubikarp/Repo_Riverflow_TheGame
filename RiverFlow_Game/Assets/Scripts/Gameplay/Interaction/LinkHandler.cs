@@ -1,8 +1,11 @@
 using UnityEngine;
-using UnityEditor;
 using NaughtyAttributes;
 using UnityEngine.Events;
 using RiverFlow.Gameplay.Interaction;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace RiverFlow.Core
 {
@@ -137,15 +140,14 @@ namespace RiverFlow.Core
             //Check drag dist
             if (Mathf.Abs(dragVect.x) > grid.cellSize || Mathf.Abs(dragVect.y) > grid.cellSize)
             {
-                //Check if i jump a tile
-                //TODO : rework 
-                if (dragVect.x > (1.5f * grid.cellSize) || dragVect.y > (1.5f * grid.cellSize))
+                //Si je dépasse de plus d'une case d'écart
+                if (dragVect.magnitude > (1.5f * grid.cellSize))
                 {
-                    dragVect = dragVect.normalized * (1.45f * grid.cellSize);
+                    dragVect = dragVect.normalized * (1.5f * grid.cellSize);
                 }
-
-                endSelectPos = pos;
-                endSelectTile = grid.PosToTile(pos);
+                //Check la ou je touche
+                endSelectPos = startSelectTilePos + dragVect;
+                endSelectTile = grid.PosToTile(endSelectPos);
 
                 switch (mode)
                 {
@@ -180,7 +182,7 @@ namespace RiverFlow.Core
         }
 
 
-        private void Awake()
+        private void Start()
         {
             input = InputHandler.Instance;
             grid = WorldGrid.Instance;
@@ -198,6 +200,7 @@ namespace RiverFlow.Core
             input.onInputRelease.RemoveListener(OnRelease);
         }
 
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             using (new Handles.DrawingScope())
@@ -208,5 +211,6 @@ namespace RiverFlow.Core
 
             }
         }
+#endif
     }
 }
