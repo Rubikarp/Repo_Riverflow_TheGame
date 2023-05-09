@@ -102,7 +102,7 @@ namespace RiverFlow.Core
             }
             else
             {
-                //ErasedRiverInTile(erasedTile);
+                ErasedRiverInTile(erasedTile);
             }
             if (!time.isPaused)
             {
@@ -120,31 +120,39 @@ namespace RiverFlow.Core
             //TODO : Mountain check
 
             List<River> tileRivers = map.rivers[erasedTileID];
-            List<Vector2Int> impactedTiles = map.riverIn[erasedTileID];
-            impactedTiles.AddRange(map.riverOut[erasedTileID]);
-            for (int i = 0; i < impactedTiles.Count; i++)
-            {
-                impactedTiles[i] += erasedTile;
-            }
-            impactedTiles = impactedTiles.Where(tile => map.GetLinkAmount(tile) >= 2).ToList();
+
+            List<Vector2Int> impactedNeighbors = new List<Vector2Int>();
+            impactedNeighbors.AddRange(map.riverIn[erasedTileID]);
+            impactedNeighbors.AddRange(map.riverOut[erasedTileID]);
+            impactedNeighbors = impactedNeighbors.Where(tile => map.GetLinkAmount(tile + erasedTile) >= 3).ToList();
 
             //foreach (var river in tileRivers)
-            for (int i = 0; i < tileRivers.Count; i++)
+            while (tileRivers.Count > 0)
             {
-                if (erasedTile == tileRivers[i].startNode || erasedTile == tileRivers[i].endNode)
+                var river = tileRivers[0];
+
+                if (erasedTile == river.startNode || erasedTile == river.endNode)
                 {
-                    tileRivers[i].Shorten(erasedTile);
+                    if(river.tiles.Count > 2)
+                    {
+                        river.Shorten(erasedTile);
+                    }
+                    else
+                    {
+                        //To Short Suppr
+                        allRiver.Remove(river);
+                        river.UnlinkToGrid();
+                        Destroy(river.gameObject);
+                    }
                 }
                 else
                 {
-                    var river = tileRivers[i];
-                    var newRivers = tileRivers[i].Break(erasedTile);
+                    var newRivers = river.Break(erasedTile);
 
                     //Suppr old river
                     allRiver.Remove(river);
                     river.UnlinkToGrid();
                     Destroy(river.gameObject);
-                    i--;
 
                     //allRiver add
                     if(newRivers.Item1.Count >= 2)
@@ -161,11 +169,12 @@ namespace RiverFlow.Core
                     }
                 }
             }
-
+            
             //TODO : Check impacted Tile
-            foreach (var impactedTile in impactedTiles)
+            foreach (var impactedNeighbor in impactedNeighbors)
             {
-                if(map.rivers[map.GridPos2ID(impactedTile)].Count >= 2)
+                var impactedTile = erasedTile + impactedNeighbor;
+                if (map.rivers[map.GridPos2ID(impactedTile)].Count >= 2)
                 {
                     River river1 = map.rivers[map.GridPos2ID(impactedTile)][0];
                     River river2 = map.rivers[map.GridPos2ID(impactedTile)][1];

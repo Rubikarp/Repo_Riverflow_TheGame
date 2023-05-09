@@ -150,9 +150,8 @@ namespace RiverFlow.Core
             //Extend river 
             river.UnlinkToGrid();
 
-            var tile = river.tiles;
-            tile.Remove(eradesTile);
-            river.Initialise(tile);
+            river.tiles.Remove(eradesTile);
+            river.Initialise(river.tiles);
 
             river.LinkToGrid();
         }
@@ -186,16 +185,11 @@ namespace RiverFlow.Core
         }
         public static (List<Vector2Int>, List<Vector2Int>) Break(this River river, Vector2Int breakPos)
         {
-            if (breakPos == river.startNode || breakPos == river.endNode)
-            {
-                Debug.LogError("Error : try to break a river extremum", river);
-                return (null, null);
-            }
+            var rivers = river.Split(breakPos);
+            rivers.Item1.Remove(breakPos);
+            rivers.Item2.Remove(breakPos);
 
-            int index = river.tiles.IndexOf(breakPos);
-            var riverTileA = river.tiles.GetRange(0, index);
-            var riverTileB = river.tiles.GetRange(index + 1, river.tiles.Count - index - 1);
-            return (riverTileA, riverTileB);
+            return (rivers.Item1, rivers.Item2);
         }
 
         public static bool CheckForLoop(this River river, Vector2Int linkTile)

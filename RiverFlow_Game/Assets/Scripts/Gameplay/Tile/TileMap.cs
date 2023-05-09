@@ -42,6 +42,7 @@ namespace RiverFlow.Core
         [SerializeField, ReadOnly] private Vector2Int size;
         public Vector2Int Size { get => size; }
 
+        [SerializeField] WorldGrid grid;
 
         [Header("State")]
         [HideInInspector] public Topology[] topology;
@@ -66,13 +67,16 @@ namespace RiverFlow.Core
         public int GetLinkAmount(Vector2Int pos) => riverIn[GridPos2ID(pos)].Count + riverOut[GridPos2ID(pos)].Count;
 
         [Header("Debug")]
-        [SerializeField] private Vector2Int lookPos;
+
+        [SerializeField, Range(0,64)] private int lookPosX;
+        [SerializeField, Range(0,64)] private int lookPosY;
+        [SerializeField, ReadOnly] private Vector2Int lookPos;
         [SerializeField, ReadOnly] private TileData lookedTile;
         private void OnValidate()
         {
             lookPos = new Vector2Int(
-                Mathf.Clamp(lookPos.x, 0, size.x - 1),
-                Mathf.Clamp(lookPos.y, 0, size.y - 1));
+                Mathf.Clamp(lookPosX, 0, size.x - 1),
+                Mathf.Clamp(lookPosY, 0, size.y - 1));
             UpdateDebugLookedTile();
         }
         [Button]
@@ -223,5 +227,11 @@ namespace RiverFlow.Core
                 t = 0f;
             }
         }
+        private void OnDrawGizmos()
+        {
+            Extension_Handles.DrawWireSquare(grid.TileToPos(lookPos),new Vector2(grid.cellSize, grid.cellSize) , 3f);
+        }
+
     }
+    
 }
