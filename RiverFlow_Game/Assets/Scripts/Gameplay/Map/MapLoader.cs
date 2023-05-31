@@ -1,8 +1,6 @@
 using UnityEngine;
 using RiverFlow.LD;
 using NaughtyAttributes;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace RiverFlow.Core
 {
