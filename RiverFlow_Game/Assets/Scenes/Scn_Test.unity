@@ -4102,12 +4102,12 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  lookPosX: 0
-  lookPosY: 0
-  lookPos: {x: 0, y: 0}
+  lookPosX: 24
+  lookPosY: 15
+  lookPos: {x: 24, y: 15}
   lookedTile:
-    gridPos: {x: 0, y: 0}
-    topology: 4
+    gridPos: {x: 24, y: 15}
+    topology: 1
     irrigation: 0
     currentFlow: 0
     previousFlow: 0
@@ -6502,7 +6502,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 886165812774654304, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 70.45
       objectReference: {fileID: 0}
     - target: {fileID: 886165812774654304, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6522,7 +6522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1497546067472555260, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 373.15002
       objectReference: {fileID: 0}
     - target: {fileID: 1497546067472555260, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6550,7 +6550,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4032655066948019438, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 272.25
       objectReference: {fileID: 0}
     - target: {fileID: 4032655066948019438, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6770,7 +6770,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8272820262125321655, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 171.35
       objectReference: {fileID: 0}
     - target: {fileID: 8272820262125321655, guid: 55c8ec5c76ac4fd43996416e9551acee, type: 3}
       propertyPath: m_AnchoredPosition.y

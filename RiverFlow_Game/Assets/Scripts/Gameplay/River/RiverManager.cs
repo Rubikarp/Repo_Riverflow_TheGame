@@ -133,7 +133,7 @@ namespace RiverFlow.Core
 
                 if (erasedTile == river.startNode || erasedTile == river.endNode)
                 {
-                    if(river.tiles.Count > 2)
+                    if (river.tiles.Count > 2)
                     {
                         river.Shorten(erasedTile);
                     }
@@ -155,7 +155,7 @@ namespace RiverFlow.Core
                     Destroy(river.gameObject);
 
                     //allRiver add
-                    if(newRivers.Item1.Count >= 2)
+                    if (newRivers.Item1.Count >= 2)
                     {
                         var addRiver = CreateRiver(newRivers.Item1);
                         addRiver.LinkToGrid();
@@ -169,7 +169,7 @@ namespace RiverFlow.Core
                     }
                 }
             }
-            
+
             //TODO : Check impacted Tile
             foreach (var impactedNeighbor in impactedNeighbors)
             {
@@ -346,12 +346,8 @@ namespace RiverFlow.Core
                 }
             }
             var riverLinked = map.rivers[map.GridPos2ID(endTile)][0];
-            if (map.rivers[map.GridPos2ID(startTile)].Contains(riverLinked))
-            {
-                Debug.LogError("Error :link river to itself", riverLinked);
-                return;
-            }
-            if (riverLinked.CheckForLoop(startTile))
+            if (map.rivers[map.GridPos2ID(startTile)].Contains(riverLinked)
+                || riverLinked.CheckForLoop(startTile))
             {
                 Debug.LogWarning(" LOOP ", riverLinked);
                 return;

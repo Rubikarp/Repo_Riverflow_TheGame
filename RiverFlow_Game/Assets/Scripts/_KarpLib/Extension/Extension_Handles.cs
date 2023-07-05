@@ -31,10 +31,7 @@ public static class Extension_Handles
         {
             drawOrigin,
             drawOrigin + Vector3.up * size.y,
-            drawOrigin + Vector3.up * size.y,
             drawOrigin + ((Vector3)size),
-            drawOrigin + ((Vector3)size),
-            drawOrigin + Vector3.right * size.x,
             drawOrigin + Vector3.right * size.x,
             drawOrigin,
         });

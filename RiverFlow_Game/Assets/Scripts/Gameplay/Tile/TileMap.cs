@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 using RiverFlow.LD;
+using UnityEditor;
 
 namespace RiverFlow.Core
 {
@@ -229,9 +230,12 @@ namespace RiverFlow.Core
         }
         private void OnDrawGizmos()
         {
-            Extension_Handles.DrawWireSquare(grid.TileToPos(lookPos),new Vector2(grid.cellSize, grid.cellSize) , 3f);
+            using (new Handles.DrawingScope(Color.red))
+            {
+                Handles.Label(grid.TileToPos(lookPos) + Vector3.up * grid.cellSize * .5f, "Tile [ " + lookPosX.ToString() + ":" + lookPosY.ToString()+ " ]");
+                Extension_Handles.DrawWireSquare(grid.TileToPos(lookPos), new Vector2(grid.cellSize, grid.cellSize), 5f);
+            }
         }
-
     }
     
 }
