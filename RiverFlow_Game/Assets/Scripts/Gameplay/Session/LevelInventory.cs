@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace RiverFlow.Core
 {
@@ -14,5 +15,12 @@ namespace RiverFlow.Core
         public int cloudsAmmount = 0;
         public int sourcesAmmount = 0;
         public int tunnelsAmmount = 0;
+
+        public UnityEvent OnInventoryChange;
+
+        private void Update()
+        {
+            OnInventoryChange.Invoke();
+        }
     }
 }

@@ -9,23 +9,23 @@ namespace RiverFlow.Core
 {
     public class RiverManager : MonoBehaviour
     {
-        [SerializeField, Required] WorldGrid grid;
-        [SerializeField, Required] TileMap map;
-        [SerializeField, Required] TimeManager time;
-        [SerializeField, Required] LinkHandler link;
+        [SerializeField, Required] private WorldGrid grid;
+        [SerializeField, Required] private TileMap map;
+        [SerializeField, Required] private TimeManager time;
+        [SerializeField, Required] private GameController controller;
 
         [SerializeField, Required] River riverPrefab;
         [SerializeField] List<River> allRiver;
 
         private void OnEnable()
         {
-            link.onLink.AddListener(OnLink);
-            link.onBreak.AddListener(OnBreak);
+            controller.onLink.AddListener(OnLink);
+            controller.onBreak.AddListener(OnBreak);
         }
         private void OnDisable()
         {
-            link.onLink.RemoveListener(OnLink);
-            link.onBreak.RemoveListener(OnBreak);
+            controller.onLink.RemoveListener(OnLink);
+            controller.onBreak.RemoveListener(OnBreak);
         }
         private void FixedUpdate()
         {

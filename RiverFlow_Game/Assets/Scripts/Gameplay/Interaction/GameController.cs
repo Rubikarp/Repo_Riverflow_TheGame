@@ -2,6 +2,8 @@ using UnityEngine;
 using NaughtyAttributes;
 using UnityEngine.Events;
 using RiverFlow.Gameplay.Interaction;
+using System;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,7 +11,7 @@ using UnityEditor;
 
 namespace RiverFlow.Core
 {
-    public class LinkHandler : MonoBehaviour
+    public class GameController : MonoBehaviour
     {
         [ReadOnly, SerializeField] private InputHandler input;
         [ReadOnly, SerializeField] private WorldGrid grid;
@@ -28,6 +30,7 @@ namespace RiverFlow.Core
         [Header("Event")]
         public UnityEvent<Vector2Int, Vector2Int> onLink;
         public UnityEvent<Vector2Int> onBreak;
+        public UnityEvent<Vector2Int, InputMode> onElementSpawn;
 
         public void OnPress(InputMode mode, Vector3 pos)
         {
@@ -35,18 +38,13 @@ namespace RiverFlow.Core
             startSelectTilePos = grid.TileToPos(startSelectTile);
             switch (mode)
             {
-                case InputMode.None:
-                    break;
-                case InputMode.Dig:
+                case InputMode.None | InputMode.Dig:
                     break;
                 case InputMode.Erase:
                     onBreak?.Invoke(startSelectTile);
                     break;
-                case InputMode.Cloud:
-                    break;
-                case InputMode.Lake:
-                    break;
-                case InputMode.Source:
+                case InputMode.Cloud | InputMode.Lake | InputMode.Source:
+                    onElementSpawn?.Invoke(startSelectTile, mode);
                     break;
                 default:
                     break;
@@ -55,23 +53,6 @@ namespace RiverFlow.Core
             switch (mode)
             {
 
-                case InputMode.diging:
-                    if (startSelectTile.linkAmount > 2 || startSelectTile.flowOut.Count >= 2)
-                    {
-                        startSelectTile.flowOut.Add(startSelectTile.flowOut[0]);
-                        startSelectTile.flowOut.RemoveAt(0);
-                    }
-                    break;
-                case InputMode.eraser:
-                    if (startSelectTile.linkAmount > 0 || startSelectTile.haveElement)
-                    {
-                        if (lastSelectedTile != startSelectTile)
-                        {
-                            lastSelectedTile = startSelectTile;
-                            onBreak?.Invoke(startSelectTile);
-                        }
-                    }
-                    break;
                 ///////
                 case InputMode.source:
                     if (inventory.sourcesAmmount > 0 && !startSelectTile.haveElement && startSelectTile.type != TileType.mountain)// 
@@ -181,8 +162,7 @@ namespace RiverFlow.Core
             dragVect = Vector3.zero;
         }
 
-
-        private void Start()
+        private void Awake()
         {
             input = InputHandler.Instance;
             grid = WorldGrid.Instance;

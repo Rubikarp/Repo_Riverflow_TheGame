@@ -1,6 +1,7 @@
 using UnityEngine;
 using NaughtyAttributes;
 using RiverFlow.Gameplay.Interaction;
+using DG.Tweening;
 
 namespace RiverFlow.Core
 {
