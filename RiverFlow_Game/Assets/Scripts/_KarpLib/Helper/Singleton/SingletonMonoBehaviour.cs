@@ -42,7 +42,7 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : Compon
         }
     }
 
-    protected virtual void Awake() => instance = this as T;
+    protected virtual void Awake() => MakeSingleton();
     protected virtual void OnDestroy() => instance = null;
 
 }

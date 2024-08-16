@@ -16,7 +16,6 @@ namespace RiverFlow.Core
 
         private void Start()
         {
-            time = TimeManager.Instance;
             dayIndex = Mathf.FloorToInt(time.gameTime / dayDuration);
         }
 

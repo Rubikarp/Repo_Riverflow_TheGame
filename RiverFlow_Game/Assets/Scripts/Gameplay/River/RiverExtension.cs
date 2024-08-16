@@ -46,7 +46,7 @@ namespace RiverFlow.Core
                 gridPos => new RiverPoint(
                     grid.TileToPos(gridPos),
                     riverPalette.FromIrrigation(map.currentFlow[map.GridPos2ID(gridPos)]),
-                    map.element[map.GridPos2ID(gridPos)] is Lake ? 1 : 0
+                    map.GetElement(gridPos) is Lake ? 1 : 0
                 )).ToList();
 
             return result;

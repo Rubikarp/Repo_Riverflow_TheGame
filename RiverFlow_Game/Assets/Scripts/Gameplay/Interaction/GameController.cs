@@ -15,7 +15,7 @@ namespace RiverFlow.Core
     {
         [ReadOnly, SerializeField] private InputHandler input;
         [ReadOnly, SerializeField] private WorldGrid grid;
-        //[Required, SerializeField] private MapHandler map;
+        [Required, SerializeField] private TileMap map;
 
         [Header("Digging")]
         [SerializeField] public Vector2Int startSelectTile;
@@ -133,6 +133,18 @@ namespace RiverFlow.Core
                 switch (mode)
                 {
                     case InputMode.Dig:
+                        // Check if there is a plant on the tile
+                        if(map.GetPlant(startSelectTile) != null
+                            || map.GetPlant(endSelectTile) != null)
+                            break;
+                        // Check if the tile is a mountain
+                        if(map.GetTopology(startSelectTile) == Topology.Mountain
+                            || map.GetTopology(endSelectTile) == Topology.Mountain)
+                        {
+                            // Check Inventaire
+
+                        }
+
                         onLink?.Invoke(startSelectTile, endSelectTile);
                         break;
                     case InputMode.Erase:
@@ -162,7 +174,7 @@ namespace RiverFlow.Core
             dragVect = Vector3.zero;
         }
 
-        private void Awake()
+        private void Start()
         {
             input = InputHandler.Instance;
             grid = WorldGrid.Instance;

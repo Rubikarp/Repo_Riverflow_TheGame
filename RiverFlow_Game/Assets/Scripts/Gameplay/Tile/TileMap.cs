@@ -4,6 +4,7 @@ using UnityEngine;
 using NaughtyAttributes;
 using RiverFlow.LD;
 using UnityEditor;
+using System;
 
 namespace RiverFlow.Core
 {
@@ -46,7 +47,7 @@ namespace RiverFlow.Core
         [SerializeField] WorldGrid grid;
 
         [Header("State")]
-        [HideInInspector] public Topology[] topology;
+        [HideInInspector] private Topology[] topology;
 
         [Header("State")]
         [HideInInspector] public FlowStrenght[] currentFlow;
@@ -58,28 +59,29 @@ namespace RiverFlow.Core
         [HideInInspector] public FlowStrenght[] extraIrrig;
 
         [Header("Linked Element")]
-        [HideInInspector] public Plant[] plant;
-        [HideInInspector] public Element[] element;
+        [HideInInspector] private Plant[] plant;
+        [HideInInspector] private Element[] element;
 
         [Header("River")]
         [HideInInspector] public List<River>[] rivers;
         [HideInInspector] public List<Vector2Int>[] riverIn;
         [HideInInspector] public List<Vector2Int>[] riverOut;
-        public int GetLinkAmount(Vector2Int pos) => riverIn[GridPos2ID(pos)].Count + riverOut[GridPos2ID(pos)].Count;
 
         [Header("Debug")]
-
-        [SerializeField, Range(0,64)] private int lookPosX;
-        [SerializeField, Range(0,64)] private int lookPosY;
+        [SerializeField, Range(0, 64)] private int lookPosX;
+        [SerializeField, Range(0, 64)] private int lookPosY;
         [SerializeField, ReadOnly] private Vector2Int lookPos;
         [SerializeField, ReadOnly] private TileData lookedTile;
-        private void OnValidate()
-        {
-            lookPos = new Vector2Int(
-                Mathf.Clamp(lookPosX, 0, size.x - 1),
-                Mathf.Clamp(lookPosY, 0, size.y - 1));
-            UpdateDebugLookedTile();
-        }
+
+        public Plant GetPlant(Vector2Int spawnPos) => plant[GridPos2ID(spawnPos)];
+        public void SetPlant(Vector2Int spawnPos, Plant newPlant) => plant[GridPos2ID(spawnPos)] = newPlant;
+        public Element GetElement(Vector2Int spawnPos) => element[GridPos2ID(spawnPos)];
+        public void SetElement(Vector2Int spawnPos, Element newElement) => element[GridPos2ID(spawnPos)] = newElement;
+        public Topology GetTopology(Vector2Int gridPos) => topology[GridPos2ID(gridPos)];
+        public void SetTopology(Vector2Int gridPos, Topology newTopo) => topology[GridPos2ID(gridPos)] = newTopo;
+        public FlowStrenght GetIrrigation(Vector2Int pos) => irrigation[GridPos2ID(pos)];
+        public int GetLinkAmount(Vector2Int pos) => riverIn[GridPos2ID(pos)].Count + riverOut[GridPos2ID(pos)].Count;
+
         [Button]
         private void UpdateDebugLookedTile()
         {
@@ -146,7 +148,7 @@ namespace RiverFlow.Core
         public void CopyFlow()
         {
             //Record currentFlow
-            currentFlow.CopyTo(previousFlow,0);
+            currentFlow.CopyTo(previousFlow, 0);
 
             //Amène des bugs / comportement bizarre
             //previousFlow = currentFlow;
@@ -196,32 +198,37 @@ namespace RiverFlow.Core
         {
             Vector2Int gridPos;
             Vector2Int lookPos;
-            FlowStrenght flow;
+            FlowStrenght irrig;
             int id;
 
             for (int x = 0; x < size.x; x++)
                 for (int y = 0; y < size.y; y++)
                 {
                     id = GridPos2ID(x, y);
-                    flow = irrigation[id];
+                    irrig = FlowStrenght._00_;
                     gridPos = new Vector2Int(x, y);
 
                     foreach (var offset in lookPosDist1)
                     {
                         lookPos = gridPos + offset;
                         if (lookPos.x < 0 || lookPos.y < 0 || lookPos.x >= size.x || lookPos.y >= size.y) continue;
-                        flow += (int)currentFlow[GridPos2ID(lookPos)];
+                        irrig += (int)currentFlow[GridPos2ID(lookPos)];
                     }
-                    flow += (int)extraIrrig[id];
+                    irrig += (int)extraIrrig[id];
 
-                    irrigation[id] = (FlowStrenght)Mathf.Clamp((int)flow, 0, 4);
+                    irrigation[id] = (FlowStrenght)Mathf.Clamp((int)irrig, 0, 4);
                 }
         }
 
         private float t;
+
+        private void Start()
+        {
+            grid = WorldGrid.Instance;
+        }
         private void Update()
         {
-                WaterStep();
+            WaterStep();
             t += Time.deltaTime;
             if (t > 0.2f)
             {
@@ -232,10 +239,17 @@ namespace RiverFlow.Core
         {
             using (new Handles.DrawingScope(Color.red))
             {
-                Handles.Label(grid.TileToPos(lookPos) + Vector3.up * grid.cellSize * .5f, "Tile [ " + lookPosX.ToString() + ":" + lookPosY.ToString()+ " ]");
+                Handles.Label(grid.TileToPos(lookPos) + Vector3.up * grid.cellSize * .5f, "Tile [ " + lookPosX.ToString() + ":" + lookPosY.ToString() + " ]");
                 Extension_Handles.DrawWireSquare(grid.TileToPos(lookPos), new Vector2(grid.cellSize, grid.cellSize), 5f);
             }
         }
+        private void OnValidate()
+        {
+            lookPos = new Vector2Int(
+                Mathf.Clamp(lookPosX, 0, size.x - 1),
+                Mathf.Clamp(lookPosY, 0, size.y - 1));
+            UpdateDebugLookedTile();
+        }
     }
-    
+
 }

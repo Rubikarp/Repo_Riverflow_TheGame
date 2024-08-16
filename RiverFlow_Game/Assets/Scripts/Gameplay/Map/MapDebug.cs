@@ -40,7 +40,7 @@ namespace RiverFlow.Core
                     {
                         for (int y = 0; y < tileMap.Size.y; y++)
                         {
-                            Handles.color = topologyPalette.FromTopo(tileMap.topology[tileMap.GridPos2ID(x,y)]);
+                            Handles.color = topologyPalette.FromTopo(tileMap.GetTopology(new Vector2Int(x, y)));
                             Extension_Handles.DrawWireSquare(startPos + new Vector3(x * grid.cellSize, y * grid.cellSize, 0) + new Vector3(halfCell, halfCell, 0), (Vector3)Vector2.one * grid.cellSize * 0.75f);
                         }
                     }

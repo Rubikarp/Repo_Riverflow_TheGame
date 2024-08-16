@@ -94,9 +94,10 @@ namespace RiverFlow.Core
         }
         private void OnBreak(Vector2Int erasedTile)
         {
-            int tileID = map.GridPos2ID(erasedTile);
-
-            if (map.element[tileID] != null && !(map.element[tileID] is Source) && map.plant[tileID] != null)
+            if (map.GetElement(erasedTile) != null 
+                && !(map.GetElement(erasedTile) is Source) 
+                && map.GetPlant(erasedTile) != null
+                )
             {
                 //ErasedElement(erasedTile);
             }
@@ -285,7 +286,7 @@ namespace RiverFlow.Core
         private void Link0To2(Vector2Int startTile, Vector2Int endTile) => Link2To0(endTile, startTile);
         private void Link2To0(Vector2Int startTile, Vector2Int endTile)
         {
-            if (map.element[map.GridPos2ID(startTile)] is Lake)
+            if (map.GetElement(startTile) is Lake)
             {
                 //CannotLink(MessageCase.NotInCanal);
                 return;
@@ -318,7 +319,7 @@ namespace RiverFlow.Core
         private void Link1To2(Vector2Int startTile, Vector2Int endTile) => Link2To1(endTile, startTile);
         private void Link2To1(Vector2Int startTile, Vector2Int endTile)
         {
-            if (map.element[map.GridPos2ID(startTile)] is Lake)
+            if (map.GetElement(startTile) is Lake)
             {
                 //CannotLink(MessageCase.NotInCanal);
                 return;
@@ -378,12 +379,12 @@ namespace RiverFlow.Core
         }
         private void Link2To2(Vector2Int startTile, Vector2Int endTile)
         {
-            if (map.element[map.GridPos2ID(startTile)] is Lake)
+            if (map.GetElement(startTile) is Lake)
             {
                 //CannotLink(MessageCase.NotInCanal);
                 return;
             }
-            if (map.element[map.GridPos2ID(endTile)] is Lake)
+            if (map.GetElement(endTile) is Lake)
             {
                 //CannotLink(MessageCase.NotInCanal);
                 return;
