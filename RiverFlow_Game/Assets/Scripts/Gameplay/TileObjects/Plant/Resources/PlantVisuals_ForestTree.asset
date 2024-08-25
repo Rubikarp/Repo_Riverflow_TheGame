@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf03a61867b687941b06925617ebda0b, type: 3}
+  m_Name: PlantVisuals_ForestTree
+  m_EditorClassIdentifier: 
+  deadSprite: {fileID: 21300000, guid: 6218ccf040e8dc446bbe7cf8b03da5a4, type: 3}
+  agonySprite: {fileID: 21300000, guid: 414a7633427ab4b489d48cb288a068c9, type: 3}
+  babySprite: {fileID: 21300000, guid: 97d4e0b38df86914cab3ebbd8fa16fe8, type: 3}
+  youngSprite: {fileID: 21300000, guid: 5f1d928c4cd5e854fb63a24628902a15, type: 3}
+  adultSprite: {fileID: 21300000, guid: 3c325cdc19ddbeb4883c1f17adde95e1, type: 3}
+  seniorSprite: {fileID: 21300000, guid: 0584da852c49d45458dce8b6cd3a3063, type: 3}
+  fruitSprite: {fileID: 21300000, guid: fc41c1556752b284796efc3cd94203d6, type: 3}
+  flowers: []

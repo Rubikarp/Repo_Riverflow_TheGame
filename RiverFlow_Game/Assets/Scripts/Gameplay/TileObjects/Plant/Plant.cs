@@ -5,6 +5,7 @@ using UnityEngine;
 using static UnityEditor.PlayerSettings;
 using UnityEngine.Events;
 using static UnityEngine.Rendering.DebugUI;
+using System;
 
 namespace RiverFlow.Core
 {
@@ -26,50 +27,37 @@ namespace RiverFlow.Core
         private TileMap map;
         private TimeManager time;
 
-        [field: Header("Plant Data")]
-        [field: SerializeField]
-        public PlantState CurrentState { get; private set; }  = PlantState.Young_;
-        [SerializeField, ReadOnly] private float scoreTime = 0f;
-        public float IrrigationTime { 
-            get => _irrigationTime;
+        [Header("Plant Data")]
+        [SerializeField]
+        private PlantState _currentState = PlantState.Baby__;
+        public PlantState CurrentState
+        {
+            get => _currentState;
             private set
             {
-                _irrigationTime = Mathf.Clamp(value, 0, (int)PlantState.Senior);
-                PlantState newState = (PlantState)Mathf.CeilToInt(_irrigationTime);
-                
-                if (newState > CurrentState)
-                {
-                    CurrentState = newState;
-                    //GrowUp
-                }
-                if(newState < CurrentState)
-                {
-                    CurrentState = newState;
-                    if (newState <= PlantState.Dead__)
-                    {
-                        //Die
-                        onPlantDeath?.Invoke(this);
-                    }
-                    else
-                    {
-                        //GrowDown
-                    }
-                }
+                if (value == _currentState) return;
+
+                _currentState = value;
+                onStateChange?.Invoke(value);
             }
         }
-        [SerializeField, ReadOnly] private float _irrigationTime = (int)PlantState.Baby__;
-        [SerializeField, Range(0,3)] private float growTime = 2f;
+        public UnityEvent onInitEnd;
+        public UnityEvent<PlantState> onStateChange;
 
-        [Header("Position Data")]
-        [SerializeField, ReadOnly] private Topology topologyOn;
+        [SerializeField, ReadOnly] private float scoreTime = 0f;
+        public float IrrigationTime { get; private set; } = 1f;
+        [SerializeField, Range(0, 3)] private float growTime = 2f;
+
+        [field: Header("Position Data")]
+        [field: SerializeField, ReadOnly] public Topology TopologyOn { get; private set;}
         [SerializeField] private Vector2Int[] neighborPoses;
 
         private bool IsAlive => CurrentState != PlantState.Dead__;
         public FlowStrenght irrigationLvl => map.GetIrrigation(gridPos);
         public bool IsIrrigated { get; private set; } = false;
-        public Plant(Vector2Int pos) : base(pos) 
-        { 
-            topologyOn = map.GetTopology(gridPos);
+        public Plant(Vector2Int pos) : base(pos)
+        {
+            TopologyOn = map.GetTopology(gridPos);
             neighborPoses = GetNeighbors(pos);
         }
 
@@ -83,8 +71,13 @@ namespace RiverFlow.Core
             map = TileMap.Instance;
             time = TimeManager.Instance;
 
-            topologyOn = map.GetTopology(gridPos);
+            TopologyOn = map.GetTopology(gridPos);
             neighborPoses = GetNeighbors(gridPos);
+
+            _currentState = PlantState.Baby__;
+            IrrigationTime = 1f;
+
+            onInitEnd?.Invoke();
         }
 
         public void Update()
@@ -97,14 +90,55 @@ namespace RiverFlow.Core
             if (IsIrrigated)
             {
                 //grow
-                IrrigationTime += time.DeltaSimulTime * (1f/ growTime);
+                IrrigationTime += time.DeltaSimulTime * (1f / growTime);
+                if (IrrigationTime > 1f)
+                {
+                    IrrigationTime %= 1f;
+                    StateUp();
+                }
             }
             else
             {
                 //die
                 IrrigationTime -= time.DeltaSimulTime * (1f / growTime);
+                if (IrrigationTime <= 0f)
+                {
+                    IrrigationTime += 1f;
+                    StateDown();
+                }
             }
         }
+
+        private void StateUp()
+        {
+            if (CurrentState == PlantState.Dead__) return;
+            if (CurrentState < PlantState.Senior)
+            {
+                CurrentState++;
+            }
+            else
+            {
+                if (CurrentState == PlantState.Senior)
+                //&& CheckSpecialCondition())
+                {
+
+                }
+            }
+        }
+        private void StateDown()
+        {
+            if (CurrentState > PlantState.Baby__)
+            {
+                CurrentState--;
+            }
+            else
+            {
+
+                CurrentState = PlantState.Dead__;
+                onPlantDeath?.Invoke(this);
+            }
+        }
+
 
         private void ScoreGeneration()
         {
@@ -118,7 +152,7 @@ namespace RiverFlow.Core
 
         private void CheckIrrigation()
         {
-            switch (topologyOn)
+            switch (TopologyOn)
             {
                 case Topology.Grass:
                     IsIrrigated = irrigationLvl >= FlowStrenght._25_;
@@ -144,13 +178,13 @@ namespace RiverFlow.Core
             ///0 1 2
             ///3 X 4
             ///5 6 7
-            for (int x = -1; x <=1; x++)
+            for (int x = -1; x <= 1; x++)
                 for (int y = -1; y <= 1; y++)
                 {
                     testedPos = pGridPos + new Vector2Int(x, y);
                     if (testedPos == pGridPos) continue;
-                    if (testedPos.x < 0 )continue;
-                    if (testedPos.y < 0 )continue;
+                    if (testedPos.x < 0) continue;
+                    if (testedPos.y < 0) continue;
                     if (testedPos.x < map.Size.x) continue;
                     if (testedPos.y < map.Size.y) continue;
                     neighbors.Add(testedPos);

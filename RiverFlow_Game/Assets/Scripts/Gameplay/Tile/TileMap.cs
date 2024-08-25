@@ -39,6 +39,34 @@ namespace RiverFlow.Core
             new Vector2Int(-2, 2),
             new Vector2Int(-1, 2),
         };
+        static readonly Vector2Int[] lookPosSquareDist1 = new Vector2Int[] {
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 1),
+            new Vector2Int(1, 0),
+            new Vector2Int(1, -1),
+            new Vector2Int(0, -1),
+            new Vector2Int(-1,-1),
+            new Vector2Int(-1, 0),
+            new Vector2Int(-1, 1),
+        };
+        static readonly Vector2Int[] lookPosSquareDist2 = new Vector2Int[] {
+            new Vector2Int( 0, 2),
+            new Vector2Int( 1, 2),
+            new Vector2Int( 2, 2),
+            new Vector2Int( 2, 1),
+            new Vector2Int( 2, 0),
+            new Vector2Int( 2,-1),
+            new Vector2Int( 2,-2),
+            new Vector2Int( 1,-2),
+            new Vector2Int( 0,-2),
+            new Vector2Int(-1,-2),
+            new Vector2Int(-2,-2),
+            new Vector2Int(-2,-1),
+            new Vector2Int(-2, 0),
+            new Vector2Int(-2, 1),
+            new Vector2Int(-2, 2),
+            new Vector2Int(-1, 2),
+        };
 
         [Header("Info")]
         [SerializeField, ReadOnly] private Vector2Int size;

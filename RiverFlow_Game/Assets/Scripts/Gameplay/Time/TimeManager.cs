@@ -7,7 +7,7 @@ namespace RiverFlow.Core
     public class TimeManager : SingletonMonoBehaviour<TimeManager>
     {
         [Header("Parameter")]
-        private float _gameSpeed = 1f;
+        [SerializeField] private float _gameSpeed = 1f;
         public float gameSpeed 
         { 
             get => _gameSpeed;

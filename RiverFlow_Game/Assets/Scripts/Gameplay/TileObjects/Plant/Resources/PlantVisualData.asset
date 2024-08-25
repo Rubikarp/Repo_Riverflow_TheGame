@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6299a90e981824291877b32a4aaef5, type: 3}
+  m_Name: PlantVisualData
+  m_EditorClassIdentifier: 
+  grass_plantGrowth: {fileID: 11400000, guid: 5b860a97b93b1a44cacc1c7f8fc033fd, type: 2}
+  clay_plantGrowth: {fileID: 11400000, guid: ed36634c30792554c9ad44663d0d7561, type: 2}
+  sand_plantGrowth: {fileID: 11400000, guid: 65df7b779b5180a41a97c8c0cdd08a04, type: 2}
