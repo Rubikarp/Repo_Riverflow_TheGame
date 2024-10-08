@@ -8,11 +8,20 @@ namespace RiverFlow.Gameplay.Interaction
     {
         public TileMap tileMap;
         public PlantSpawner plantSpawner;
-
-        public bool SetExtraFlow = false;
+        public ElementSpawner elementSpawner;
+        
+        [Header("Mode")]
+        public bool CreateLake = false;
+        public bool CreateCloud = false;
+        public bool CreateSource = false;
+        [Space]
         public bool CreatePlant = false;
-        public FlowStrenght value;
-
+        [Space]
+        public bool SetExtraFlow = false;
+        public FlowStrenght value = FlowStrenght._00_;
+        [Space]
+        public bool PaintTopology = false;
+        public Topology topology = Topology.Grass;
 
         public void onPress(InputMode mode, Vector3 pos)
         {
@@ -20,29 +29,23 @@ namespace RiverFlow.Gameplay.Interaction
 
             if (CreatePlant)
                 plantSpawner.SpawnPlant(tile);
+
             if(SetExtraFlow)
                 tileMap.extraFlow[tileMap.GridPos2ID(tile)] = value;
-
+            
+            if(CreateCloud)
+                elementSpawner.SpawnCloud(tile);
+            if(CreateSource)
+                elementSpawner.SpawnSource(tile);
+            if(CreateLake)
+                elementSpawner.SpawnLake(tile);
         }
         public void onMaintain(InputMode mode, Vector3 pos)
         {
             var tile = WorldGrid.Instance.PosToTile(pos);
-            /*
-            switch (mode)
-            {
-                case InputMode.Dig:
-                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
-                    break;
-                case InputMode.Erase:
-                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
-                    break;
-                case InputMode.Cloud | InputMode.Lake | InputMode.Source:
-                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
-                    break;
-                default:
-                    tileMap.topology[tileMap.GridPos2ID(tile)] = Topology.Clay;
-                    break;
-            }*/
+
+            if (PaintTopology)
+                tileMap.SetTopology(tile, topology);
         }
     }
 }
