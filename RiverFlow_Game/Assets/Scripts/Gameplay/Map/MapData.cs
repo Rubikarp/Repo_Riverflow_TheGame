@@ -1,4 +1,3 @@
-using Karprod;
 using UnityEngine;
 using RiverFlow.Core;
 using NaughtyAttributes;
@@ -23,12 +22,9 @@ namespace RiverFlow.LD
         public Topology this[int x, int y] { get { return topology[x + (y * (size.x-1))]; } }
 
 
-        [Button]
-        public void MapToTextureChannel() => TextureGenerator.Create("newMapTexture", GenerateMapTexture(), TextureType.PNG);
-
         public Texture2D GenerateMapTexture()
         {
-            Texture2D mapTexture = TextureGenerator.Generate(size, true);
+            Texture2D mapTexture = new Texture2D(size.x, size.y, TextureFormat.RGBA32, false);
             for (int x = 0; x < size.x; x++)
                 for (int y = 0; y < size.y; y++)
                     switch (this[x, y])

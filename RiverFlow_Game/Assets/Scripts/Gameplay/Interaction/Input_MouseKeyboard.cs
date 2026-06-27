@@ -29,7 +29,7 @@ namespace RiverFlow.Gameplay.Interaction
         [SerializeField, ReadOnly] bool isMaintainingL = false;
         [SerializeField, ReadOnly] bool isMaintainingR = false;
         [SerializeField, ReadOnly] bool isMaintainingM = false;
-        [SerializeField] private InteractionPlane Limit => input.playableArea;
+        private InteractionPlane Limit => input.playableArea;
         public Ray MouseRay { get => Utilities_UI.MouseScreenRay(); }
 
         private void Update()

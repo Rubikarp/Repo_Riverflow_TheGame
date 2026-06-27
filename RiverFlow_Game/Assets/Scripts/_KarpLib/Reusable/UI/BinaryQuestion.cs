@@ -5,7 +5,7 @@ using TMPro;
 
 public class BinaryQuestion : MonoBehaviour
 {
-    public TMP_Animated questionSlot;
+    public TextMeshProUGUI questionSlot;
 
     public Button buttonYes;
     public TextMeshProUGUI textSlotYes;
@@ -20,11 +20,11 @@ public class BinaryQuestion : MonoBehaviour
     }
     private void Start()
     {
-        questionSlot.onDialogueEnd.AddListener(() =>
-        {
-            buttonNo.interactable = true;
-            buttonYes.interactable = true;
-        });
+        //questionSlot.onDialogueEnd.AddListener(() =>
+        //{
+        //  buttonNo.interactable = true;
+        //  buttonYes.interactable = true;
+        //});
     }
 
     private bool? response = null;
@@ -32,7 +32,7 @@ public class BinaryQuestion : MonoBehaviour
     {
         response = null;
         questionSlot.text = question;
-        questionSlot.ReadText();
+        //questionSlot.ReadText();
 
         textSlotNo.text = answerNo;
         textSlotYes.text = answerYes;

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MoreMountains.Feedbacks;
 using System;
 
 namespace RiverFlow.Core
@@ -12,8 +11,6 @@ namespace RiverFlow.Core
     {
         private Plant plant;
         private SpriteRenderer spriteRenderer;
-        public MMF_Player growFeedback;
-        public MMF_Player shrinkFeedback;
 
         [Header("Visual")]
         private SpriteRenderer sprRender;
@@ -48,12 +45,12 @@ namespace RiverFlow.Core
             spriteRenderer.sprite = visuals.GetSprite(newState, plant.TopologyOn);
             if(previousState > newState)
             {
-                shrinkFeedback.PlayFeedbacks();
+                //shrinkFeedback.PlayFeedbacks();
             }
             else
             if(previousState < newState)
             {
-                growFeedback.PlayFeedbacks();
+                //growFeedback.PlayFeedbacks();
             }
             else
             {

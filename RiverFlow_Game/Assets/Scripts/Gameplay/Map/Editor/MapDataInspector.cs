@@ -70,7 +70,7 @@ namespace RiverFlow.LD
             if (GUILayout.Button("Save To Texture", EditorStyles.miniButton, GUILayout.Height(3 * EditorGUIUtility.singleLineHeight)))
             {
                 MapData data = (MapData)target;
-                data.MapToTextureChannel();
+                //data.MapToTextureChannel();
             }
 
             if (GUILayout.Button("Open Editor Window", EditorStyles.miniButton, GUILayout.Height(3 * EditorGUIUtility.singleLineHeight)))

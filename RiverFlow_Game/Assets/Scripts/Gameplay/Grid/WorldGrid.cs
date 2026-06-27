@@ -7,6 +7,7 @@ using Unity.Mathematics;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEngine.InputSystem;
 #endif
 
 namespace RiverFlow.Core
@@ -134,7 +135,7 @@ namespace RiverFlow.Core
             
             using (new Handles.DrawingScope())
             {
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Pointer.current.position.value);
                 Vector2Int tile = PosToTile(mousePos);
                 Vector3 pos = TileToPos(tile);
                 Handles.color = Color.red;

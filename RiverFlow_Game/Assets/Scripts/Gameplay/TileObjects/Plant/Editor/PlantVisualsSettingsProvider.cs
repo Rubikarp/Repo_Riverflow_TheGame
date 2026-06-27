@@ -1,5 +1,4 @@
-﻿using Karprod;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace RiverFlow.Core
@@ -35,7 +34,7 @@ namespace RiverFlow.Core
 
         public static PlantVisualData CreateSettingsAsset()
         {
-            var path = KarpToolUtilities.FindScriptFolder("PlantVisualData", true);
+            var path = "fsfdsfs";// KarpToolUtilities.FindScriptFolder("PlantVisualData", true);
             if (!AssetDatabase.IsValidFolder(path + "Resources/"))
             {
                 var folder = path.Remove(path.Length - 1);

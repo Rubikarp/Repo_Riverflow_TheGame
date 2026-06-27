@@ -1,4 +1,3 @@
-using Karprod;
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -37,7 +36,7 @@ namespace RiverFlow.Core
 
 		public static RiverMeshSettings CreateSettingsAsset()
 		{
-			var path = KarpToolUtilities.FindScriptFolder("RiverMeshSettings", true);
+			var path = "sfsdf"; //KarpToolUtilities.FindScriptFolder("RiverMeshSettings", true);
 			if (!AssetDatabase.IsValidFolder(path + "Resources/"))
 			{
 				var folder = path.Remove(path.Length - 1);

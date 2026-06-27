@@ -1,4 +1,3 @@
-using Karprod;
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
@@ -37,7 +36,7 @@ namespace RiverFlow.Core
 
 		public static RiverPalette CreateSettingsAsset()
 		{
-			var path = KarpToolUtilities.FindScriptFolder("RiverPalette", true);
+			var path = "qsdqsd";// KarpToolUtilities.FindScriptFolder("RiverPalette", true);
 			if (!AssetDatabase.IsValidFolder(path + "Resources/"))
 			{
 				var folder = path.Remove(path.Length - 1);

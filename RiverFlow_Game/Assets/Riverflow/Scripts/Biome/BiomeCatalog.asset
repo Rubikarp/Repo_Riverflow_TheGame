@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032d34aaf49a43578c32a71213cba9e8, type: 3}
+  m_Name: BiomeCatalog
+  m_EditorClassIdentifier: Riverflow::RiverFlow.BiomeCatalogSO
+  _biomes:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 11400000, guid: a6e62cef8c6b5614bbe88db5281e2c47, type: 2}
+    - Key: 1
+      Value: {fileID: 11400000, guid: a6f07e078f48b4a4d9e5be76bbb01899, type: 2}
+    - Key: 2
+      Value: {fileID: 11400000, guid: fb9b9d7ff93b8d54c8f6dce4bb5bc801, type: 2}
